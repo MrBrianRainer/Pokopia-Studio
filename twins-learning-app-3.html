@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🌟 Little Learners</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sun:#FFD93D; --coral:#FF6B6B; --mint:#6BCB77; --sky:#4ECDC4;
+  --lav:#C77DFF; --peach:#FFB347; --pink:#FF8FAB; --navy:#1a1a2e;
+  --cream:#FFFBF2;
+  --tabH:68px; --topH:54px;
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background:var(--cream);}
+button{cursor:pointer;font-family:'Nunito',sans-serif;border:none;outline:none;}
+
+/* ── TOP BAR ── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--topH);z-index:200;
+  background:var(--navy);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 12px rgba(0,0,0,.3);
+}
+.topbar-title{
+  font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--sun);
+  letter-spacing:.5px;
+}
+
+/* ── BOTTOM TAB BAR ── */
+.tabbar{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--navy);
+  display:flex;align-items:stretch;
+  height:calc(var(--tabH) + var(--safe-bot));
+  padding-bottom:var(--safe-bot);
+  box-shadow:0 -2px 16px rgba(0,0,0,.25);
+}
+.tab-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:2px;padding:6px 2px;
+  background:none;border:none;color:rgba(255,255,255,.45);
+  transition:all .2s;font-size:.55rem;font-weight:800;
+  text-transform:uppercase;letter-spacing:.3px;
+  position:relative;
+}
+.tab-btn .tab-icon{font-size:1.5rem;line-height:1;transition:transform .2s;}
+.tab-btn.active{color:var(--sun);}
+.tab-btn.active .tab-icon{transform:scale(1.15) translateY(-2px);}
+.tab-btn.active::after{
+  content:'';position:absolute;bottom:0;left:20%;right:20%;
+  height:3px;background:var(--sun);border-radius:2px 2px 0 0;
+}
+
+/* ── PAGES ── */
+.page{
+  display:none;
+  position:fixed;top:var(--topH);left:0;right:0;
+  bottom:calc(var(--tabH) + var(--safe-bot));
+  overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+.page.active{display:block;}
+
+/* ══════════════════
+   HOME
+══════════════════ */
+#page-home{
+  background:linear-gradient(160deg,#1a1a2e,#0f3460);
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:flex-start;padding:20px 16px 20px;
+  overflow-y:auto;
+}
+.stars-bg{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.star-dot{position:absolute;background:white;border-radius:50%;
+  animation:twinkle var(--dur,2s) ease-in-out infinite;animation-delay:var(--del,0s);}
+@keyframes twinkle{0%,100%{opacity:.15;}50%{opacity:.9;}}
+.home-hero{position:relative;z-index:1;text-align:center;margin-bottom:20px;}
+.home-title{font-family:'Fredoka One',cursive;font-size:clamp(1.8rem,7vw,2.8rem);color:white;line-height:1.1;animation:fadeUp .6s ease both;}
+.home-title span{color:var(--sun);}
+.home-sub{font-size:.9rem;color:rgba(255,255,255,.65);margin-top:6px;animation:fadeUp .6s .15s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+.home-grid{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;width:100%;max-width:500px;
+  animation:fadeUp .6s .25s ease both;
+}
+.home-card{
+  background:white;border-radius:20px;padding:16px 10px;
+  text-align:center;cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,.15);
+  border:3px solid transparent;
+  transition:transform .2s,box-shadow .2s;
+  -webkit-user-select:none;
+  position:relative;overflow:hidden;
+}
+.home-card:active{transform:scale(.96);}
+.home-card .card-emoji{font-size:2.4rem;display:block;margin-bottom:6px;}
+.home-card h3{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--navy);}
+.home-card p{font-size:.65rem;color:#999;margin-top:3px;line-height:1.3;}
+.home-card .cbadge{
+  position:absolute;top:8px;right:8px;
+  background:var(--cc,#FFD93D);color:var(--navy);
+  font-family:'Fredoka One',cursive;font-size:.55rem;
+  padding:2px 6px;border-radius:8px;
+}
+
+/* ══════════════════
+   SHARED COMPONENTS
+══════════════════ */
+.ph{padding:16px 16px 8px;text-align:center;}
+.ph h1{font-family:'Fredoka One',cursive;font-size:1.6rem;margin-bottom:2px;}
+.ph p{font-size:.82rem;color:#777;}
+
+.game-card{
+  background:white;border-radius:20px;padding:20px;
+  margin:0 16px 16px;
+  box-shadow:0 4px 18px rgba(0,0,0,.09);
+}
+.game-card h3{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--navy);margin-bottom:14px;text-align:center;}
+
+.big-btn{
+  width:100%;padding:16px;border-radius:16px;
+  font-family:'Fredoka One',cursive;font-size:1.1rem;
+  transition:transform .15s,opacity .15s;
+}
+.big-btn:active{transform:scale(.97);opacity:.85;}
+
+.choice-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.choice-btn{
+  min-width:64px;height:64px;border-radius:16px;
+  border:3px solid #eee;background:white;
+  font-family:'Fredoka One',cursive;font-size:1.5rem;color:#555;
+  transition:all .2s;padding:0 10px;
+}
+.choice-btn:active{transform:scale(.93);}
+.choice-btn.correct{border-color:var(--mint);background:var(--mint);color:white;animation:pop .35s ease;}
+.choice-btn.wrong{border-color:var(--coral);background:#ffe0e0;animation:shake .3s ease;}
+@keyframes pop{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}}
+@keyframes shake{0%,100%{transform:translateX(0);}33%{transform:translateX(-8px);}66%{transform:translateX(8px);}}
+
+.score-row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:white;border-radius:14px;padding:10px 16px;
+  margin:0 16px 12px;box-shadow:0 3px 12px rgba(0,0,0,.07);
+}
+.score-stars{font-size:1.3rem;}
+.score-txt{font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--navy);}
+.score-reset{padding:6px 14px;border-radius:10px;background:#f5f5f5;font-family:'Fredoka One',cursive;font-size:.75rem;color:#888;}
+
+/* ══════════════════
+   ABC PAGE
+══════════════════ */
+#page-abc{background:linear-gradient(160deg,#fff9f0,#f0fffe);}
+.case-tabs{display:flex;gap:8px;padding:0 16px 12px;justify-content:center;}
+.case-tab{
+  flex:1;max-width:140px;padding:10px;border-radius:14px;
+  border:2.5px solid #ddd;background:white;
+  font-family:'Fredoka One',cursive;font-size:.9rem;color:#888;transition:all .2s;
+}
+.case-tab.on{border-color:var(--coral);background:var(--coral);color:white;}
+.abc-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));
+  gap:8px;padding:0 16px 16px;
+}
+.lcard{
+  background:white;border-radius:16px;padding:10px 6px 8px;
+  text-align:center;cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);border:2.5px solid transparent;
+  transition:all .2s;
+}
+.lcard:active{transform:scale(.93);}
+.lcard.sel{border-color:var(--coral);}
+.lcard .lc-big{font-family:'Fredoka One',cursive;font-size:2rem;line-height:1;display:block;}
+.lcard .lc-emoji{font-size:.9rem;}
+.lcard .lc-word{font-size:.55rem;color:#aaa;font-weight:800;text-transform:uppercase;}
+
+/* Letter detail overlay */
+.letter-overlay{
+  display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,.6);align-items:flex-end;justify-content:center;
+}
+.letter-overlay.open{display:flex;}
+.letter-sheet{
+  background:white;border-radius:28px 28px 0 0;padding:24px 20px 32px;
+  width:100%;max-width:500px;
+  animation:slideUp .3s ease;
+}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.letter-sheet-close{
+  position:absolute;top:14px;right:18px;
+  width:36px;height:36px;border-radius:50%;background:#f0f0f0;
+  font-size:1.2rem;color:#888;display:flex;align-items:center;justify-content:center;
+}
+.ls-title{font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:12px;text-align:center;}
+#abcCanvas{width:100%;border-radius:12px;display:block;}
+.ls-btns{display:flex;gap:10px;margin-top:14px;}
+
+/* ══════════════════
+   NUMBERS PAGE
+══════════════════ */
+#page-numbers{background:linear-gradient(160deg,#f0fff4,#fff0f9);}
+.num-scroll{
+  display:flex;gap:10px;padding:0 16px 16px;
+  overflow-x:auto;scrollbar-width:none;
+}
+.num-scroll::-webkit-scrollbar{display:none;}
+.ncard{
+  flex-shrink:0;width:80px;background:white;border-radius:16px;
+  padding:10px 6px;text-align:center;cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);border:2.5px solid transparent;
+  transition:all .2s;
+}
+.ncard:active{transform:scale(.93);}
+.ncard.sel{border-color:var(--mint);}
+.ncard-num{font-family:'Fredoka One',cursive;font-size:2.2rem;line-height:1;display:block;}
+.ncard-word{font-size:.55rem;color:#aaa;font-weight:800;text-transform:uppercase;}
+
+/* ══════════════════
+   BIBLE PAGE
+══════════════════ */
+#page-shapes{background:linear-gradient(160deg,#fffbf0,#fff0f8);}
+.bible-verse-card{
+  margin:0 16px 14px;border-radius:22px;padding:20px 18px;
+  box-shadow:0 6px 24px rgba(0,0,0,.1);
+  position:relative;overflow:hidden;cursor:pointer;
+  transition:transform .2s;
+  border:3px solid transparent;
+}
+.bible-verse-card:active{transform:scale(.98);}
+.bible-verse-card.current{border-color:var(--sun);}
+.bvc-ref{font-family:'Fredoka One',cursive;font-size:.8rem;opacity:.7;margin-bottom:6px;}
+.bvc-verse{font-family:'Fredoka One',cursive;font-size:1.1rem;line-height:1.55;color:white;}
+.bvc-emoji{font-size:2.8rem;position:absolute;right:14px;top:50%;transform:translateY(-50%);opacity:.35;}
+.bvc-lesson{font-size:.78rem;color:rgba(255,255,255,.8);margin-top:8px;line-height:1.4;}
+.bible-activity-card{
+  margin:0 16px 14px;background:white;border-radius:20px;padding:20px;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+}
+.bible-activity-card h3{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--navy);margin-bottom:12px;text-align:center;}
+.bible-q{font-size:.95rem;color:#444;font-weight:800;text-align:center;margin-bottom:14px;line-height:1.5;}
+.bible-choices{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.bchoice{
+  padding:12px 20px;border-radius:14px;border:2.5px solid #eee;background:white;
+  font-family:'Fredoka One',cursive;font-size:.95rem;color:#555;transition:all .2s;
+}
+.bchoice:active{transform:scale(.95);}
+.bchoice.correct{border-color:var(--mint);background:var(--mint);color:white;}
+.bchoice.wrong{border-color:var(--coral);background:#ffe0e0;}
+.bible-nav-row{display:flex;gap:10px;padding:0 16px 8px;}
+.bible-nav-btn{
+  flex:1;padding:13px;border-radius:14px;border:2.5px solid #eee;background:white;
+  font-family:'Fredoka One',cursive;font-size:.9rem;color:#888;transition:all .2s;
+}
+.bible-nav-btn.on{background:var(--sun);border-color:var(--sun);color:var(--navy);}
+
+/* ══════════════════
+   SIGHT WORDS
+══════════════════ */
+#page-sight{background:linear-gradient(160deg,#f0faff,#fff8ff);}
+.flashcard-wrap{
+  display:flex;align-items:center;justify-content:center;
+  padding:8px 16px 12px;perspective:1000px;
+}
+.flashcard{
+  width:100%;max-width:380px;height:180px;
+  position:relative;cursor:pointer;
+  transform-style:preserve-3d;transition:transform .55s;
+}
+.flashcard.flipped{transform:rotateY(180deg);}
+.card-face{
+  position:absolute;inset:0;border-radius:24px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  backface-visibility:hidden;box-shadow:0 8px 28px rgba(0,0,0,.15);
+}
+.card-front{background:var(--navy);}
+.card-back{background:white;transform:rotateY(180deg);border:3px solid var(--sun);}
+.card-word{font-family:'Fredoka One',cursive;font-size:clamp(2.8rem,10vw,4rem);color:white;letter-spacing:4px;}
+.card-hint{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--navy);text-align:center;padding:16px;line-height:1.4;}
+.sight-nav-row{display:flex;gap:10px;padding:0 16px 12px;}
+.sight-nav-row button{
+  flex:1;padding:14px;border-radius:14px;
+  font-family:'Fredoka One',cursive;font-size:1rem;
+  transition:transform .15s;
+}
+.sight-nav-row button:active{transform:scale(.95);}
+.progress-dots{
+  display:flex;flex-wrap:wrap;gap:5px;
+  padding:0 16px 16px;justify-content:center;
+}
+.pdot{
+  width:28px;height:28px;border-radius:8px;
+  background:#eee;border:2px solid #ddd;
+  font-family:'Fredoka One',cursive;font-size:.6rem;color:#bbb;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;
+}
+.pdot.seen{background:var(--sky);border-color:var(--sky);color:white;}
+.pdot.cur{background:var(--sun);border-color:var(--sun);color:var(--navy);transform:scale(1.15);}
+
+/* ══════════════════
+   PHONICS
+══════════════════ */
+#page-phonics{background:linear-gradient(160deg,#fffbf0,#f0fff8);}
+.phonics-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));
+  gap:8px;padding:0 16px 16px;
+}
+.pcard{
+  background:white;border-radius:14px;padding:10px 6px;
+  text-align:center;cursor:pointer;
+  box-shadow:0 3px 10px rgba(0,0,0,.07);border:2.5px solid transparent;
+  transition:all .2s;
+}
+.pcard:active{transform:scale(.93);}
+.pcard.playing{border-color:var(--mint);}
+.pcard-letter{font-family:'Fredoka One',cursive;font-size:2rem;line-height:1;display:block;}
+.pcard-phoneme{font-size:.6rem;color:#aaa;margin-top:2px;}
+
+/* ══════════════════
+   MATH
+══════════════════ */
+#page-math{background:linear-gradient(160deg,#f0f8ff,#fff0f8);}
+.math-tabs-row{display:flex;gap:8px;padding:0 16px 12px;overflow-x:auto;scrollbar-width:none;}
+.math-tabs-row::-webkit-scrollbar{display:none;}
+.mtab{
+  flex-shrink:0;padding:10px 18px;border-radius:20px;
+  border:2.5px solid #ddd;background:white;
+  font-family:'Fredoka One',cursive;font-size:.85rem;color:#888;transition:all .2s;
+}
+.mtab.on{border-color:var(--sky);background:var(--sky);color:white;}
+.math-panel{display:none;}
+.math-panel.on{display:block;}
+
+.equation-box{
+  display:flex;align-items:center;justify-content:center;
+  gap:12px;flex-wrap:wrap;margin-bottom:14px;
+}
+.eq-tile{
+  width:72px;height:72px;border-radius:16px;background:#f5f5f5;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:2.2rem;color:var(--navy);
+}
+.eq-op{font-family:'Fredoka One',cursive;font-size:2.2rem;color:var(--coral);}
+.eq-blank{width:72px;height:72px;border-radius:16px;border:3px dashed var(--sky);background:#f0fffe;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--sky);}
+.objects-row{text-align:center;font-size:2rem;letter-spacing:2px;margin-bottom:14px;line-height:1.6;}
+
+/* ══════════════════
+   STORIES
+══════════════════ */
+#page-stories{background:linear-gradient(160deg,#fff8f0,#f0f4ff);}
+.story-tabs{display:flex;gap:8px;padding:0 16px 12px;overflow-x:auto;scrollbar-width:none;}
+.story-tabs::-webkit-scrollbar{display:none;}
+.stab{
+  flex-shrink:0;padding:10px 16px;border-radius:20px;
+  border:2.5px solid #ddd;background:white;
+  font-family:'Fredoka One',cursive;font-size:.85rem;color:#888;
+  transition:all .2s;display:flex;align-items:center;gap:6px;
+}
+.stab.on{border-color:var(--peach);background:var(--peach);color:white;}
+.story-reader{margin:0 16px 16px;}
+.story-scene{
+  text-align:center;font-size:5rem;padding:16px 0 8px;
+  animation:sceneIn .4s ease;min-height:100px;
+}
+@keyframes sceneIn{from{opacity:0;transform:scale(.7);}to{opacity:1;transform:scale(1);}}
+.story-text{
+  font-family:'Fredoka One',cursive;font-size:clamp(1rem,4vw,1.3rem);
+  color:#333;line-height:1.7;text-align:center;
+  background:white;border-radius:16px;padding:16px;
+  box-shadow:0 3px 12px rgba(0,0,0,.07);margin-bottom:12px;
+  min-height:70px;
+}
+.story-text .sw{cursor:pointer;transition:background .2s;border-radius:4px;padding:0 2px;}
+.story-text .sw.lit{background:var(--sun);}
+.story-nav-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.snav-btn{
+  flex:1;padding:14px;border-radius:14px;background:var(--navy);color:white;
+  font-family:'Fredoka One',cursive;font-size:1rem;transition:transform .15s;
+}
+.snav-btn:active{transform:scale(.95);}
+.snav-btn:disabled{opacity:.3;}
+.story-counter{font-family:'Fredoka One',cursive;font-size:.85rem;color:#aaa;}
+
+/* ══════════════════
+   WRITING
+══════════════════ */
+#page-writing{background:linear-gradient(160deg,#fffbf0,#f0fbff);}
+.writing-controls{margin:0 16px 12px;background:white;border-radius:18px;padding:16px;box-shadow:0 3px 14px rgba(0,0,0,.07);}
+.w-tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;}
+.w-tabs::-webkit-scrollbar{display:none;}
+.wtab{
+  flex-shrink:0;padding:9px 16px;border-radius:12px;
+  border:2px solid #eee;background:white;
+  font-family:'Fredoka One',cursive;font-size:.8rem;color:#888;transition:all .2s;
+}
+.wtab.on{border-color:var(--coral);background:var(--coral);color:white;}
+.w-panel{display:none;margin-bottom:10px;}
+.w-panel.on{display:block;}
+.w-input{
+  width:100%;padding:12px 14px;border:2.5px solid #eee;border-radius:12px;
+  font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;outline:none;
+  -webkit-appearance:none;
+}
+.w-input:focus{border-color:var(--coral);}
+.walpha{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.wabc{
+  width:36px;height:36px;border-radius:8px;border:2px solid #eee;
+  background:white;font-family:'Fredoka One',cursive;font-size:.95rem;color:#555;transition:all .15s;
+}
+.wabc.on{border-color:var(--coral);background:var(--coral);color:white;}
+.wchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.wchip{padding:7px 14px;border-radius:14px;background:var(--sun);color:#7a5a00;font-weight:800;font-size:.8rem;border:none;transition:transform .15s;}
+.wchip:active{transform:scale(.92);}
+.w-btns{display:flex;gap:8px;}
+.wbtn{flex:1;padding:13px;border-radius:12px;font-family:'Fredoka One',cursive;font-size:.9rem;transition:transform .15s;}
+.wbtn:active{transform:scale(.96);}
+#worksheetCanvas{display:block;width:100%;border-radius:14px;box-shadow:0 4px 16px rgba(0,0,0,.1);margin:0 16px 16px;width:calc(100% - 32px);}
+
+/* ══════════════════
+   MODAL
+══════════════════ */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:flex-end;justify-content:center;}
+.modal-ov.open{display:flex;}
+.modal-box{
+  background:white;border-radius:28px 28px 0 0;
+  padding:24px 20px calc(20px + var(--safe-bot));
+  width:100%;max-width:480px;
+  animation:slideUp .3s ease;text-align:center;
+}
+.modal-box h2{font-family:'Fredoka One',cursive;font-size:1.5rem;color:var(--lav);margin-bottom:6px;}
+.modal-box p{color:#888;font-size:.88rem;margin-bottom:18px;}
+.age-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px;}
+.abtn{
+  width:52px;height:52px;border-radius:50%;border:3px solid #eee;
+  background:white;font-family:'Fredoka One',cursive;font-size:1.2rem;color:#aaa;transition:all .2s;
+}
+.abtn.on{border-color:var(--lav);background:var(--lav);color:white;transform:scale(1.1);}
+.modal-btns{display:flex;gap:10px;}
+.m-cancel{flex:1;padding:13px;border-radius:12px;border:2px solid #eee;background:white;font-family:'Fredoka One',cursive;font-size:.95rem;color:#aaa;}
+.m-go{flex:2;padding:13px;border-radius:12px;background:var(--lav);font-family:'Fredoka One',cursive;font-size:1rem;color:white;transition:opacity .2s;}
+.m-go:disabled{opacity:.35;}
+.m-loading{display:none;color:var(--lav);font-weight:800;margin-top:10px;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* ══════════════════
+   CONFETTI
+══════════════════ */
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;}
+.cp{
+  position:absolute;width:9px;height:9px;top:-12px;border-radius:2px;
+  animation:cfall var(--dur,1.8s) var(--del,0s) ease-in forwards;
+}
+@keyframes cfall{
+  0%{transform:translateX(0) rotate(0);top:-12px;opacity:1;}
+  100%{transform:translateX(var(--dx,0px)) rotate(540deg);top:105vh;opacity:0;}
+}
+
+/* ══════════════════
+   PRINT
+══════════════════ */
+@media print{
+  @page{size:letter portrait;margin:.4in .5in;}
+  html,body{overflow:visible!important;height:auto!important;}
+  .topbar,.tabbar,.modal-ov,.writing-controls{display:none!important;}
+  .page{display:none!important;position:static!important;overflow:visible!important;}
+  #page-writing{display:block!important;padding:0!important;}
+  #worksheetCanvas{width:100%!important;margin:0!important;box-shadow:none!important;border-radius:0!important;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar"><span class="topbar-title">🌟 Little Learners</span></div>
+
+<!-- ════════════ PAGES ════════════ -->
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="stars-bg" id="starsBg"></div>
+  <div class="home-hero">
+    <div class="home-title">Little Learners<br><span>Twins Edition! 🌟</span></div>
+    <p class="home-sub">Fun learning for our almost-4-year-olds ✨</p>
+  </div>
+  <div class="home-grid">
+    <div class="home-card" style="--cc:#FF6B6B" onclick="nav('abc')"><span class="cbadge">A-Z</span><span class="card-emoji">🔤</span><h3>ABC</h3><p>Letters & tracing</p></div>
+    <div class="home-card" style="--cc:#6BCB77" onclick="nav('numbers')"><span class="cbadge">1-20</span><span class="card-emoji">🔢</span><h3>Numbers</h3><p>Count & learn</p></div>
+    <div class="home-card" style="--cc:#FFB347" onclick="nav('shapes')"><span class="cbadge">Bible</span><span class="card-emoji">✝️</span><h3>Bible</h3><p>Verses & activities</p></div>
+    <div class="home-card" style="--cc:#4ECDC4" onclick="nav('sight')"><span class="cbadge">Top 30</span><span class="card-emoji">👁️</span><h3>Sight Words</h3><p>Flashcards</p></div>
+    <div class="home-card" style="--cc:#FFB347" onclick="nav('phonics')"><span class="cbadge">Sounds</span><span class="card-emoji">🔊</span><h3>Phonics</h3><p>Letter sounds</p></div>
+    <div class="home-card" style="--cc:#4ECDC4" onclick="nav('math')"><span class="cbadge">Games</span><span class="card-emoji">➕</span><h3>Math</h3><p>Add & patterns</p></div>
+    <div class="home-card" style="--cc:#FF8FAB" onclick="nav('stories')"><span class="cbadge">5 Stories</span><span class="card-emoji">📖</span><h3>Stories</h3><p>Read-along</p></div>
+    <div class="home-card" style="--cc:#FF6B6B" onclick="nav('writing')"><span class="cbadge">Print</span><span class="card-emoji">✏️</span><h3>Writing</h3><p>Tracing sheets</p></div>
+  </div>
+</div>
+
+<!-- ABC -->
+<div id="page-abc" class="page">
+  <div class="ph"><h1 style="color:var(--coral)">🔤 Alphabet!</h1><p>Tap a letter to practice</p></div>
+  <div class="case-tabs">
+    <button class="case-tab on" onclick="setCaseTab('upper',this)">Uppercase A-Z</button>
+    <button class="case-tab" onclick="setCaseTab('lower',this)">Lowercase a-z</button>
+  </div>
+  <div class="abc-grid" id="abcGrid"></div>
+</div>
+
+<!-- LETTER OVERLAY -->
+<div class="letter-overlay" id="letterOverlay">
+  <div class="letter-sheet" style="position:relative;">
+    <button class="letter-sheet-close" onclick="closeLetter()">✕</button>
+    <div class="ls-title" id="lsTitle"></div>
+    <!-- Guide canvas (stroke arrows) -->
+    <canvas id="abcCanvas" height="160" style="width:100%;border-radius:10px;display:block;"></canvas>
+    <!-- Drawing canvas overlay -->
+    <div style="position:relative;margin-top:10px;">
+      <canvas id="drawCanvas" style="width:100%;border-radius:14px;display:block;border:2.5px dashed #ddd;touch-action:none;background:#fafff8;"></canvas>
+      <div style="text-align:center;font-size:.72rem;color:#bbb;margin-top:4px;font-weight:700;">✏️ Draw your letter here!</div>
+    </div>
+    <div class="ls-btns">
+      <button class="big-btn" style="background:var(--coral);color:white;flex:2" onclick="window.print()">🖨️ Print Worksheet</button>
+      <button class="big-btn" style="background:#ffd93d;color:#7a5a00;flex:1" onclick="clearDraw()">🧹 Clear</button>
+      <button class="big-btn" style="background:#f0f0f0;color:#555;flex:1" onclick="closeLetter()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- NUMBERS -->
+<div id="page-numbers" class="page">
+  <div class="ph"><h1 style="color:var(--mint)">🔢 Numbers!</h1><p>Scroll to pick a number, then count!</p></div>
+  <div class="num-scroll" id="numScroll"></div>
+  <div class="game-card">
+    <h3 id="countQ">🎯 How many can you count?</h3>
+    <div id="countObjs" style="text-align:center;font-size:2.2rem;letter-spacing:4px;margin-bottom:16px;min-height:50px;line-height:1.5;"></div>
+    <div class="choice-row" id="countChoices"></div>
+  </div>
+</div>
+
+<!-- BIBLE -->
+<div id="page-shapes" class="page">
+  <div class="ph"><h1 style="color:var(--peach)">✝️ Bible Time!</h1><p>Verses, stories & activities</p></div>
+  <div class="bible-nav-row" id="bibleNavRow">
+    <button class="bible-nav-btn on" onclick="setBibleTab('verses',this)">📖 Verses</button>
+    <button class="bible-nav-btn" onclick="setBibleTab('stories',this)">🌟 Stories</button>
+    <button class="bible-nav-btn" onclick="setBibleTab('quiz',this)">🧩 Quiz</button>
+  </div>
+  <div id="bpanel-verses"></div>
+  <div id="bpanel-stories" style="display:none;"></div>
+  <div id="bpanel-quiz" style="display:none;">
+    <div class="bible-activity-card">
+      <h3>🙏 Bible Quiz!</h3>
+      <div class="bible-q" id="bibleQ"></div>
+      <div class="bible-choices" id="bibleChoices"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGHT WORDS -->
+<div id="page-sight" class="page">
+  <div class="ph"><h1 style="color:var(--sky)">👁️ Sight Words!</h1><p>Tap card to flip • tap words to highlight</p></div>
+  <div class="score-row">
+    <span class="score-stars" id="sightStars">⭐⭐⭐</span>
+    <span class="score-txt" id="sightScore">Let's go!</span>
+    <button class="score-reset" onclick="resetSight()">Reset</button>
+  </div>
+  <div class="flashcard-wrap">
+    <div class="flashcard" id="sightCard" onclick="flipCard()">
+      <div class="card-face card-front"><span class="card-word" id="sightWord">the</span></div>
+      <div class="card-face card-back"><div class="card-hint" id="sightHint"></div></div>
+    </div>
+  </div>
+  <div class="sight-nav-row">
+    <button style="background:#eee;color:#555;" onclick="prevWord()">← Back</button>
+    <button style="background:var(--sky);color:white;" onclick="flipCard()">Flip 🔄</button>
+    <button style="background:var(--mint);color:white;" onclick="nextWord()">Next →</button>
+  </div>
+  <div class="progress-dots" id="sightDots"></div>
+</div>
+
+<!-- PHONICS -->
+<div id="page-phonics" class="page">
+  <div class="ph"><h1 style="color:var(--peach)">🔊 Phonics!</h1><p>Tap a letter to hear its sound</p></div>
+  <div class="phonics-grid" id="phonicsGrid"></div>
+  <div class="game-card">
+    <h3>🎵 Rhyme Time!</h3>
+    <div id="rhymeWord" style="font-family:'Fredoka One',cursive;font-size:2.4rem;color:var(--navy);text-align:center;margin-bottom:6px;"></div>
+    <p style="text-align:center;color:#aaa;font-size:.8rem;margin-bottom:12px;">Which word rhymes?</p>
+    <div class="choice-row" id="rhymeChoices" style="flex-wrap:wrap;"></div>
+  </div>
+</div>
+
+<!-- MATH -->
+<div id="page-math" class="page">
+  <div class="ph"><h1 style="color:var(--sky)">➕ Math Fun!</h1><p>Pick a game below</p></div>
+  <div class="score-row">
+    <span class="score-stars" id="mathStars">⭐⭐⭐</span>
+    <span class="score-txt" id="mathScore">Let's go!</span>
+    <button class="score-reset" onclick="resetMath()">New Game</button>
+  </div>
+  <div class="math-tabs-row">
+    <button class="mtab on" onclick="setMtab('add',this)">➕ Add</button>
+    <button class="mtab" onclick="setMtab('sub',this)">➖ Subtract</button>
+    <button class="mtab" onclick="setMtab('pat',this)">🔁 Patterns</button>
+    <button class="mtab" onclick="setMtab('tap',this)">👆 Count</button>
+  </div>
+  <div class="math-panel on" id="mp-add">
+    <div class="game-card">
+      <div class="equation-box" id="addEq"></div>
+      <div class="objects-row" id="addObjs"></div>
+      <div class="choice-row" id="addChoices"></div>
+    </div>
+  </div>
+  <div class="math-panel" id="mp-sub">
+    <div class="game-card">
+      <div class="equation-box" id="subEq"></div>
+      <div class="objects-row" id="subObjs"></div>
+      <div class="choice-row" id="subChoices"></div>
+    </div>
+  </div>
+  <div class="math-panel" id="mp-pat">
+    <div class="game-card">
+      <h3>What comes next?</h3>
+      <div id="patRow" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:2.2rem;margin-bottom:16px;"></div>
+      <div class="choice-row" id="patChoices" style="flex-wrap:wrap;font-size:1.8rem;"></div>
+    </div>
+  </div>
+  <div class="math-panel" id="mp-tap">
+    <div class="game-card">
+      <h3>Tap each one to count!</h3>
+      <div id="tapObjs" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-size:2.4rem;margin-bottom:14px;"></div>
+      <div id="tapResult" style="font-family:'Fredoka One',cursive;font-size:2rem;color:var(--sky);text-align:center;min-height:48px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- STORIES -->
+<div id="page-stories" class="page">
+  <div class="ph"><h1 style="color:var(--peach)">📖 Stories!</h1><p>Tap words to highlight them</p></div>
+  <div class="story-tabs" id="storyTabs"></div>
+  <div class="story-reader">
+    <div class="story-scene" id="storyScene"></div>
+    <div class="story-text" id="storyText"></div>
+    <div class="story-nav-row">
+      <button class="snav-btn" id="sPrev" onclick="sNav(-1)">← Back</button>
+      <span class="story-counter" id="sCtr">1 / 6</span>
+      <button class="snav-btn" id="sNext" onclick="sNav(1)">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- WRITING -->
+<div id="page-writing" class="page">
+  <div class="ph"><h1 style="color:var(--coral)">✏️ Handwriting!</h1><p>Make a printable tracing worksheet</p></div>
+  <div class="writing-controls">
+    <div class="w-tabs">
+      <button class="wtab on" onclick="setWTab('name',this)">👶 Name</button>
+      <button class="wtab" onclick="setWTab('letter',this)">🔤 Letter</button>
+      <button class="wtab" onclick="setWTab('word',this)">📝 Word</button>
+      <button class="wtab" onclick="setWTab('random',this)">🎲 Random</button>
+    </div>
+    <div class="w-panel on" id="wp-name">
+      <input class="w-input" id="wName" placeholder="Child's name…" maxlength="12" oninput="makeWS()"/>
+    </div>
+    <div class="w-panel" id="wp-letter">
+      <div class="walpha" id="wAlpha"></div>
+    </div>
+    <div class="w-panel" id="wp-word">
+      <input class="w-input" id="wWord" placeholder="Type a word…" maxlength="12"/>
+    </div>
+    <div class="w-panel" id="wp-random">
+      <div class="wchips">
+        <button class="wchip" onclick="wRand('cat')">cat</button>
+        <button class="wchip" onclick="wRand('dog')">dog</button>
+        <button class="wchip" onclick="wRand('sun')">sun</button>
+        <button class="wchip" onclick="wRand('love')">love</button>
+        <button class="wchip" onclick="wRand('jump')">jump</button>
+        <button class="wchip" onclick="wRand('fish')">fish</button>
+        <button class="wchip" onclick="wRand('rain')">rain</button>
+        <button class="wchip" onclick="wRand('cake')">cake</button>
+        <button class="wchip" onclick="wRand('bird')">bird</button>
+        <button class="wchip" onclick="wRand('tree')">tree</button>
+      </div>
+    </div>
+    <div class="w-btns">
+      <button class="wbtn" style="background:var(--coral);color:white;" onclick="makeWS()">🎨 Make!</button>
+      <button class="wbtn" style="background:var(--lav);color:white;" onclick="openAgeModal()">🤖 AI</button>
+      <button class="wbtn" style="background:var(--mint);color:white;" onclick="window.print()">🖨️ Print</button>
+    </div>
+  </div>
+  <canvas id="worksheetCanvas"></canvas>
+</div>
+
+<!-- MODAL -->
+<div class="modal-ov" id="ageModal">
+  <div class="modal-box">
+    <h2>🤖 Word for Age</h2>
+    <p>How old is the child?</p>
+    <div class="age-row">
+      <button class="abtn" onclick="selAge(3,this)">3</button>
+      <button class="abtn" onclick="selAge(4,this)">4</button>
+      <button class="abtn" onclick="selAge(5,this)">5</button>
+      <button class="abtn" onclick="selAge(6,this)">6</button>
+      <button class="abtn" onclick="selAge(7,this)">7</button>
+      <button class="abtn" onclick="selAge(8,this)">8</button>
+    </div>
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModal()">Cancel</button>
+      <button class="m-go" id="mGo" onclick="doAge()" disabled>✨ Pick!</button>
+    </div>
+    <div class="m-loading" id="mLoad">✨ Picking…</div>
+  </div>
+</div>
+<div class="confetti-wrap" id="confWrap"></div>
+
+<!-- BOTTOM TAB BAR -->
+<nav class="tabbar">
+  <button class="tab-btn active" id="tab-home" onclick="nav('home',this)"><span class="tab-icon">🏠</span>Home</button>
+  <button class="tab-btn" id="tab-abc" onclick="nav('abc',this)"><span class="tab-icon">🔤</span>ABC</button>
+  <button class="tab-btn" id="tab-numbers" onclick="nav('numbers',this)"><span class="tab-icon">🔢</span>Numbers</button>
+  <button class="tab-btn" id="tab-shapes" onclick="nav('shapes',this)"><span class="tab-icon">✝️</span>Bible</button>
+  <button class="tab-btn" id="tab-sight" onclick="nav('sight',this)"><span class="tab-icon">👁️</span>Words</button>
+  <button class="tab-btn" id="tab-phonics" onclick="nav('phonics',this)"><span class="tab-icon">🔊</span>Sounds</button>
+  <button class="tab-btn" id="tab-math" onclick="nav('math',this)"><span class="tab-icon">➕</span>Math</button>
+  <button class="tab-btn" id="tab-stories" onclick="nav('stories',this)"><span class="tab-icon">📖</span>Stories</button>
+  <button class="tab-btn" id="tab-writing" onclick="nav('writing',this)"><span class="tab-icon">✏️</span>Write</button>
+</nav>
+
+<script>
+// ── NAV ──
+function nav(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const tb = btn || document.getElementById('tab-' + id);
+  if (tb) tb.classList.add('active');
+  // scroll page to top
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.scrollTop = 0;
+}
+
+// ── STARS ──
+(function(){
+  const bg = document.getElementById('starsBg');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div'); s.className = 'star-dot';
+    const sz = Math.random()*2.5+1;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${1.5+Math.random()*2.5}s;--del:${Math.random()*3}s;`;
+    bg.appendChild(s);
+  }
+})();
+
+// ── CONFETTI ──
+function celebrate() {
+  const cols = ['#FFD93D','#FF6B6B','#6BCB77','#4ECDC4','#C77DFF','#FF8FAB'];
+  const c = document.getElementById('confWrap'); c.innerHTML = '';
+  for (let i = 0; i < 45; i++) {
+    const p = document.createElement('div'); p.className = 'cp';
+    p.style.cssText = `left:${Math.random()*100}%;background:${cols[i%cols.length]};--dur:${1.4+Math.random()*1.2}s;--del:${Math.random()*.4}s;--dx:${(Math.random()-.5)*160}px;border-radius:${Math.random()>.5?'50%':'2px'};`;
+    c.appendChild(p);
+  }
+  setTimeout(() => c.innerHTML = '', 3000);
+}
+
+// ── STROKE DATA ──
+const S = {
+  A:[{p:[[50,10],[15,110]]},{p:[[50,10],[85,110]]},{p:[[28,72],[72,72]]}],
+  B:[{p:[[22,10],[22,110]]},{p:[[22,10],[58,10],[72,22],[72,40],[58,58],[22,58]]},{p:[[22,58],[62,58],[78,72],[78,92],[62,110],[22,110]]}],
+  C:[{p:[[80,28],[60,10],[35,12],[18,32],[15,60],[18,88],[35,108],[60,110],[80,92]]}],
+  D:[{p:[[22,10],[22,110]]},{p:[[22,10],[55,10],[76,28],[76,92],[55,110],[22,110]]}],
+  E:[{p:[[22,10],[22,110]]},{p:[[22,10],[78,10]]},{p:[[22,60],[65,60]]},{p:[[22,110],[78,110]]}],
+  F:[{p:[[22,10],[22,110]]},{p:[[22,10],[78,10]]},{p:[[22,60],[65,60]]}],
+  G:[{p:[[80,28],[60,10],[35,12],[18,32],[15,60],[18,88],[35,108],[60,110],[80,95],[80,65],[55,65]]}],
+  H:[{p:[[20,10],[20,110]]},{p:[[80,10],[80,110]]},{p:[[20,60],[80,60]]}],
+  I:[{p:[[35,10],[65,10]]},{p:[[50,10],[50,110]]},{p:[[35,110],[65,110]]}],
+  J:[{p:[[35,10],[65,10]]},{p:[[55,10],[55,88],[42,108],[26,104],[16,92]]}],
+  K:[{p:[[22,10],[22,110]]},{p:[[75,10],[22,60]]},{p:[[22,60],[75,110]]}],
+  L:[{p:[[22,10],[22,110]]},{p:[[22,110],[78,110]]}],
+  M:[{p:[[15,110],[15,10]]},{p:[[15,10],[50,65]]},{p:[[50,65],[85,10]]},{p:[[85,10],[85,110]]}],
+  N:[{p:[[15,110],[15,10]]},{p:[[15,10],[85,110]]},{p:[[85,110],[85,10]]}],
+  O:[{p:[[50,10],[28,16],[14,35],[12,60],[14,85],[28,104],[50,110],[72,104],[86,85],[88,60],[86,35],[72,16],[50,10]]}],
+  P:[{p:[[22,10],[22,110]]},{p:[[22,10],[60,10],[76,24],[76,46],[60,60],[22,60]]}],
+  Q:[{p:[[50,10],[28,16],[14,35],[12,60],[14,85],[28,104],[50,110],[72,104],[86,85],[88,60],[86,35],[72,16],[50,10]]},{p:[[58,88],[82,115]]}],
+  R:[{p:[[22,10],[22,110]]},{p:[[22,10],[60,10],[76,24],[76,46],[60,60],[22,60]]},{p:[[48,60],[76,110]]}],
+  S:[{p:[[78,28],[58,10],[32,14],[18,34],[32,56],[58,65],[74,86],[60,108],[34,110],[16,94]]}],
+  T:[{p:[[15,10],[85,10]]},{p:[[50,10],[50,110]]}],
+  U:[{p:[[20,10],[20,82],[30,104],[50,112],[70,104],[80,82],[80,10]]}],
+  V:[{p:[[15,10],[50,110]]},{p:[[85,10],[50,110]]}],
+  W:[{p:[[10,10],[28,110]]},{p:[[28,110],[50,68]]},{p:[[50,68],[72,110]]},{p:[[72,110],[90,10]]}],
+  X:[{p:[[15,10],[85,110]]},{p:[[85,10],[15,110]]}],
+  Y:[{p:[[15,10],[50,60]]},{p:[[85,10],[50,60]]},{p:[[50,60],[50,110]]}],
+  Z:[{p:[[15,10],[85,10],[15,110],[85,110]]}]
+};
+function drawArrow(ctx,fx,fy,tx2,ty2,sz,col){
+  const a=Math.atan2(ty2-fy,tx2-fx);
+  ctx.save();ctx.translate(tx2,ty2);ctx.rotate(a);
+  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-sz,-sz*.45);ctx.lineTo(-sz,sz*.45);
+  ctx.closePath();ctx.fillStyle=col;ctx.fill();ctx.restore();
+}
+function drawTraceLetter(ctx,ch,cx,bY,lH,dashCol,arrCol){
+  const strokes=S[ch.toUpperCase()];if(!strokes)return;
+  const sc=lH/100,ox=cx-50*sc,oy=bY-110*sc;
+  const tx=x=>ox+x*sc,ty=y=>oy+y*sc;
+  strokes.forEach((s,si)=>{
+    const pts=s.p;
+    ctx.beginPath();ctx.moveTo(tx(pts[0][0]),ty(pts[0][1]));
+    for(let i=1;i<pts.length;i++)ctx.lineTo(tx(pts[i][0]),ty(pts[i][1]));
+    ctx.strokeStyle=dashCol;ctx.lineWidth=lH*.075;ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.setLineDash([lH*.09,lH*.055]);ctx.stroke();ctx.setLineDash([]);
+    const n=pts.length;
+    drawArrow(ctx,tx(pts[n-2][0]),ty(pts[n-2][1]),tx(pts[n-1][0]),ty(pts[n-1][1]),lH*.09,arrCol);
+    const sx=tx(pts[0][0]),sy=ty(pts[0][1]),nr=lH*.11;
+    ctx.beginPath();ctx.arc(sx,sy,nr,0,Math.PI*2);ctx.fillStyle='white';ctx.fill();
+    ctx.strokeStyle=arrCol;ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle=arrCol;ctx.font=`bold ${Math.round(nr*1.35)}px Nunito,sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(si+1,sx,sy);
+  });
+}
+
+// ── ABC ──
+const LW={A:['Apple','🍎'],B:['Ball','⚽'],C:['Cat','🐱'],D:['Dog','🐶'],E:['Egg','🥚'],F:['Fish','🐟'],G:['Grapes','🍇'],H:['Hat','🎩'],I:['Ice cream','🍦'],J:['Jump','🐸'],K:['Kite','🪁'],L:['Lion','🦁'],M:['Moon','🌙'],N:['Nest','🐦'],O:['Orange','🍊'],P:['Pizza','🍕'],Q:['Queen','👑'],R:['Rainbow','🌈'],S:['Sun','☀️'],T:['Tree','🌳'],U:['Umbrella','☂️'],V:['Violin','🎻'],W:['Whale','🐋'],X:['Xylophone','🎵'],Y:['Yarn','🧶'],Z:['Zebra','🦓']};
+const LC=['#FF6B6B','#FF8FAB','#FFB347','#FFD93D','#6BCB77','#4ECDC4','#4a9fd4','#C77DFF'];
+let abcCase='upper', abcLetter=null;
+function buildABC(){
+  const g=document.getElementById('abcGrid');g.innerHTML='';
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach((ch,i)=>{
+    const c=document.createElement('div');c.className='lcard';
+    const col=LC[i%LC.length];
+    const disp=abcCase==='upper'?ch:ch.toLowerCase();
+    c.innerHTML=`<span class="lc-emoji">${LW[ch][1]}</span><span class="lc-big" style="color:${col}">${disp}</span><div class="lc-word">${LW[ch][0]}</div>`;
+    c.onclick=()=>{
+      document.querySelectorAll('.lcard').forEach(x=>x.classList.remove('sel'));
+      c.classList.add('sel');abcLetter=ch;openLetterOverlay(ch,col);
+    };
+    g.appendChild(c);
+  });
+}
+function setCaseTab(t,btn){
+  abcCase=t;
+  document.querySelectorAll('.case-tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');buildABC();
+
+// ── DRAWING CANVAS ──
+let drawCtx=null,drawing=false,drawColor='#4a9fd4';
+function initDrawCanvas(){
+  const dc=document.getElementById('drawCanvas');
+  if(!dc)return;
+  const wrap=dc.parentElement;
+  const W=Math.min(wrap.clientWidth,500);
+  dc.width=W;dc.height=Math.round(W*0.55);
+  dc.style.width='100%';
+  drawCtx=dc.getContext('2d');
+  drawCtx.fillStyle='#fafff8';drawCtx.fillRect(0,0,dc.width,dc.height);
+  // Draw faint guide lines
+  drawCtx.strokeStyle='#eef6ff';drawCtx.lineWidth=1.5;drawCtx.setLineDash([6,4]);
+  const midY=dc.height*.45,topY=dc.height*.1,baseY=dc.height*.85;
+  [topY,midY,baseY].forEach(y=>{drawCtx.beginPath();drawCtx.moveTo(8,y);drawCtx.lineTo(dc.width-8,y);drawCtx.stroke();});
+  drawCtx.setLineDash([]);
+  // Touch events
+  dc.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const t=e.touches[0],r=dc.getBoundingClientRect();drawCtx.beginPath();drawCtx.moveTo((t.clientX-r.left)*(dc.width/r.width),(t.clientY-r.top)*(dc.height/r.height));},{passive:false});
+  dc.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const t=e.touches[0],r=dc.getBoundingClientRect();drawCtx.lineTo((t.clientX-r.left)*(dc.width/r.width),(t.clientY-r.top)*(dc.height/r.height));drawCtx.strokeStyle=drawColor;drawCtx.lineWidth=7;drawCtx.lineCap='round';drawCtx.lineJoin='round';drawCtx.stroke();},{passive:false});
+  dc.addEventListener('touchend',()=>{drawing=false;});
+  // Mouse events for desktop
+  dc.addEventListener('mousedown',e=>{drawing=true;const r=dc.getBoundingClientRect();drawCtx.beginPath();drawCtx.moveTo((e.clientX-r.left)*(dc.width/r.width),(e.clientY-r.top)*(dc.height/r.height));});
+  dc.addEventListener('mousemove',e=>{if(!drawing)return;const r=dc.getBoundingClientRect();drawCtx.lineTo((e.clientX-r.left)*(dc.width/r.width),(e.clientY-r.top)*(dc.height/r.height));drawCtx.strokeStyle=drawColor;drawCtx.lineWidth=7;drawCtx.lineCap='round';drawCtx.lineJoin='round';drawCtx.stroke();});
+  dc.addEventListener('mouseup',()=>{drawing=false;});
+  dc.addEventListener('mouseleave',()=>{drawing=false;});
+}
+function clearDraw(){
+  const dc=document.getElementById('drawCanvas');
+  if(!dc||!drawCtx)return;
+  drawCtx.fillStyle='#fafff8';drawCtx.fillRect(0,0,dc.width,dc.height);
+  // Re-draw guide lines
+  drawCtx.strokeStyle='#eef6ff';drawCtx.lineWidth=1.5;drawCtx.setLineDash([6,4]);
+  const midY=dc.height*.45,topY=dc.height*.1,baseY=dc.height*.85;
+  [topY,midY,baseY].forEach(y=>{drawCtx.beginPath();drawCtx.moveTo(8,y);drawCtx.lineTo(dc.width-8,y);drawCtx.stroke();});
+  drawCtx.setLineDash([]);
+}
+}
+function openLetterOverlay(ch,col){
+  document.getElementById('lsTitle').textContent=`${LW[ch][1]} ${abcCase==='upper'?ch:ch.toLowerCase()} — ${LW[ch][0]}`;
+  document.getElementById('letterOverlay').classList.add('open');
+  drawABCCanvas(ch,col);
+  setTimeout(initDrawCanvas,80);
+}
+function closeLetter(){document.getElementById('letterOverlay').classList.remove('open');}
+function drawABCCanvas(ch,col){
+  const canvas=document.getElementById('abcCanvas');
+  const wrap=canvas.parentElement;
+  const PW=Math.min(wrap.clientWidth-8,500);
+  canvas.width=PW;canvas.height=200;canvas.style.width='100%';
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='white';ctx.fillRect(0,0,PW,200);
+  const lH=140,bY=170;
+  function rules(){
+    ctx.strokeStyle='#ccc';ctx.lineWidth=1.2;ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(0,bY-lH);ctx.lineTo(PW,bY-lH);ctx.stroke();
+    ctx.strokeStyle='#ddd';ctx.lineWidth=.9;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(0,bY-lH*.5);ctx.lineTo(PW,bY-lH*.5);ctx.stroke();
+    ctx.strokeStyle='#ccc';ctx.lineWidth=1.2;ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(0,bY);ctx.lineTo(PW,bY);ctx.stroke();ctx.setLineDash([]);
+  }
+  rules();
+  const slotW=PW/5;
+  drawTraceLetter(ctx,ch,slotW*.5,bY,lH*.88,col,col);
+  for(let i=1;i<5;i++)drawTraceLetter(ctx,ch,slotW*(i+.5),bY,lH*.85,'#ccc','#aaa');
+  ctx.font='bold 11px Nunito,sans-serif';ctx.fillStyle='#bbb';ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText(`Trace the letter ${abcCase==='upper'?ch:ch.toLowerCase()} • ${LW[ch][0]} ${LW[ch][1]}`,PW/2,198);
+}
+buildABC();
+
+// ── DRAWING CANVAS ──
+let drawCtx=null,drawing=false,drawColor='#4a9fd4';
+function initDrawCanvas(){
+  const dc=document.getElementById('drawCanvas');
+  if(!dc)return;
+  const wrap=dc.parentElement;
+  const W=Math.min(wrap.clientWidth,500);
+  dc.width=W;dc.height=Math.round(W*0.55);
+  dc.style.width='100%';
+  drawCtx=dc.getContext('2d');
+  drawCtx.fillStyle='#fafff8';drawCtx.fillRect(0,0,dc.width,dc.height);
+  // Draw faint guide lines
+  drawCtx.strokeStyle='#eef6ff';drawCtx.lineWidth=1.5;drawCtx.setLineDash([6,4]);
+  const midY=dc.height*.45,topY=dc.height*.1,baseY=dc.height*.85;
+  [topY,midY,baseY].forEach(y=>{drawCtx.beginPath();drawCtx.moveTo(8,y);drawCtx.lineTo(dc.width-8,y);drawCtx.stroke();});
+  drawCtx.setLineDash([]);
+  // Touch events
+  dc.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const t=e.touches[0],r=dc.getBoundingClientRect();drawCtx.beginPath();drawCtx.moveTo((t.clientX-r.left)*(dc.width/r.width),(t.clientY-r.top)*(dc.height/r.height));},{passive:false});
+  dc.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const t=e.touches[0],r=dc.getBoundingClientRect();drawCtx.lineTo((t.clientX-r.left)*(dc.width/r.width),(t.clientY-r.top)*(dc.height/r.height));drawCtx.strokeStyle=drawColor;drawCtx.lineWidth=7;drawCtx.lineCap='round';drawCtx.lineJoin='round';drawCtx.stroke();},{passive:false});
+  dc.addEventListener('touchend',()=>{drawing=false;});
+  // Mouse events for desktop
+  dc.addEventListener('mousedown',e=>{drawing=true;const r=dc.getBoundingClientRect();drawCtx.beginPath();drawCtx.moveTo((e.clientX-r.left)*(dc.width/r.width),(e.clientY-r.top)*(dc.height/r.height));});
+  dc.addEventListener('mousemove',e=>{if(!drawing)return;const r=dc.getBoundingClientRect();drawCtx.lineTo((e.clientX-r.left)*(dc.width/r.width),(e.clientY-r.top)*(dc.height/r.height));drawCtx.strokeStyle=drawColor;drawCtx.lineWidth=7;drawCtx.lineCap='round';drawCtx.lineJoin='round';drawCtx.stroke();});
+  dc.addEventListener('mouseup',()=>{drawing=false;});
+  dc.addEventListener('mouseleave',()=>{drawing=false;});
+}
+function clearDraw(){
+  const dc=document.getElementById('drawCanvas');
+  if(!dc||!drawCtx)return;
+  drawCtx.fillStyle='#fafff8';drawCtx.fillRect(0,0,dc.width,dc.height);
+  // Re-draw guide lines
+  drawCtx.strokeStyle='#eef6ff';drawCtx.lineWidth=1.5;drawCtx.setLineDash([6,4]);
+  const midY=dc.height*.45,topY=dc.height*.1,baseY=dc.height*.85;
+  [topY,midY,baseY].forEach(y=>{drawCtx.beginPath();drawCtx.moveTo(8,y);drawCtx.lineTo(dc.width-8,y);drawCtx.stroke();});
+  drawCtx.setLineDash([]);
+}
+
+// ── NUMBERS ──
+const NE=['','🐱','🐶','🌟','🍎','🐸','🦋','🌈','🍕','🦄','🎈','🌻','🐠','🦁','🍓','🐘','🎵','🌊','🐬','☀️','🎂'];
+const NW=['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty'];
+const NC=['','#FF6B6B','#FF8FAB','#FFB347','#FFD93D','#6BCB77','#4ECDC4','#4a9fd4','#C77DFF','#FF6B6B','#FF8FAB','#FFB347','#FFD93D','#6BCB77','#4ECDC4','#4a9fd4','#C77DFF','#FF6B6B','#FF8FAB','#FFB347','#FFD93D'];
+let cntAns=0;
+function buildNums(){
+  const g=document.getElementById('numScroll');g.innerHTML='';
+  for(let i=1;i<=20;i++){
+    const c=document.createElement('div');c.className='ncard';
+    c.innerHTML=`<span class="ncard-num" style="color:${NC[i]}">${i}</span><div class="ncard-word">${NW[i]}</div>`;
+    c.onclick=()=>{document.querySelectorAll('.ncard').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');newCountGame(i);};
+    g.appendChild(c);
+  }
+}
+function newCountGame(t){
+  if(!t)t=Math.floor(Math.random()*10)+1;
+  cntAns=t;const em=NE[t]||'⭐';
+  document.getElementById('countQ').textContent=`🎯 Count the ${em} — how many?`;
+  document.getElementById('countObjs').innerHTML=em.repeat(t);
+  const w=[t,t===1?2:t-1,t>=20?t-2:t+1].sort(()=>Math.random()-.5);
+  const cc=document.getElementById('countChoices');cc.innerHTML='';
+  w.forEach(n=>{
+    const b=document.createElement('button');b.className='choice-btn';b.textContent=n;
+    b.onclick=()=>{if(n===cntAns){b.classList.add('correct');celebrate();setTimeout(()=>{b.classList.remove('correct');newCountGame();},1100);}else{b.classList.add('wrong');setTimeout(()=>b.classList.remove('wrong'),600);}};
+    cc.appendChild(b);
+  });
+}
+buildNums();newCountGame();
+
+// ── BIBLE ──
+const bibleVerses=[
+  {ref:'John 3:16',text:'For God so loved the world that He gave His only Son.',emoji:'❤️',lesson:'God loves YOU so much!',color:'#FF6B6B',bg:'linear-gradient(135deg,#FF6B6B,#ff4444)'},
+  {ref:'Psalm 23:1',text:'The Lord is my shepherd; I shall not want.',emoji:'🐑',lesson:'God takes care of us like a shepherd!',color:'#6BCB77',bg:'linear-gradient(135deg,#6BCB77,#44aa55)'},
+  {ref:'Proverbs 3:5',text:'Trust in the Lord with all your heart.',emoji:'🙏',lesson:'We can always trust God!',color:'#4ECDC4',bg:'linear-gradient(135deg,#4ECDC4,#2eaaaa)'},
+  {ref:'Philippians 4:13',text:'I can do all things through Christ who gives me strength.',emoji:'💪',lesson:'With Jesus, we can do anything!',color:'#C77DFF',bg:'linear-gradient(135deg,#C77DFF,#aa55ee)'},
+  {ref:'Matthew 5:9',text:'Blessed are the peacemakers, for they shall be called children of God.',emoji:'🕊️',lesson:'Be kind and make peace with others!',color:'#FFB347',bg:'linear-gradient(135deg,#FFB347,#ee8800)'},
+  {ref:'Genesis 1:1',text:'In the beginning, God created the heavens and the earth.',emoji:'🌍',lesson:'God made everything — even you!',color:'#FF8FAB',bg:'linear-gradient(135deg,#FF8FAB,#ee5588)'},
+  {ref:'Matthew 22:37',text:'Love the Lord your God with all your heart, soul, and mind.',emoji:'🌟',lesson:'Loving God is the most important thing!',color:'#FFD93D',bg:'linear-gradient(135deg,#FFD93D,#ddaa00)'},
+  {ref:'Jeremiah 29:11',text:'For I know the plans I have for you, says the Lord — plans for good!',emoji:'✨',lesson:'God has a wonderful plan for your life!',color:'#4a9fd4',bg:'linear-gradient(135deg,#4a9fd4,#2277bb)'},
+];
+const bibleStories=[
+  {title:'Noah & the Ark',emoji:'🚢',color:'#4a9fd4',bg:'linear-gradient(135deg,#4a9fd4,#2277bb)',
+   text:'God told Noah to build a big boat called an ark. Noah put two of every animal inside — lions, elephants, birds, and more! Then it rained for 40 days. But Noah and all the animals were safe. When the rain stopped, God put a rainbow in the sky as a promise!',
+   lesson:'God keeps His promises! 🌈'},
+  {title:'David & Goliath',emoji:'🪨',color:'#FF6B6B',bg:'linear-gradient(135deg,#FF6B6B,#cc3333)',
+   text:'A young boy named David trusted God. A huge giant named Goliath was scary and mean. Everyone was afraid — but not David! He picked up five smooth stones and used his sling. With one stone, David defeated the giant! David showed that with God, we are never too small!',
+   lesson:'With God, we can face anything! 💪'},
+  {title:'Jonah & the Whale',emoji:'🐋',color:'#6BCB77',bg:'linear-gradient(135deg,#6BCB77,#339944)',
+   text:'God asked Jonah to go help the people of Nineveh. But Jonah ran away on a boat! A big storm came. Jonah was swallowed by a huge fish! Inside the fish, Jonah prayed to God. The fish spit Jonah out. Jonah said sorry and obeyed God.',
+   lesson:'We should always obey God! 🙏'},
+  {title:'Jesus & the Children',emoji:'👶',color:'#C77DFF',bg:'linear-gradient(135deg,#C77DFF,#9933ee)',
+   text:'One day, parents brought their little children to see Jesus. The helpers said \'Don\'t bother Jesus!\' But Jesus said, \'Let the children come to me!\' Jesus hugged the children and blessed them. Jesus loves ALL children — even you and your twin!',
+   lesson:'Jesus loves children — just like you! ❤️'},
+  {title:'Creation',emoji:'🌍',color:'#FFB347',bg:'linear-gradient(135deg,#FFB347,#dd7700)',
+   text:'In the beginning there was nothing. Then God said "Let there be light!" — and there was light! God made the sky, the ocean, and the land. He made trees, flowers, fish, birds, and animals. Then God made the first people. God looked at everything and said "It is very good!"',
+   lesson:'God made you and loves you! 🌟'},
+];
+const bibleQuiz=[
+  {q:'Who built the big ark?',a:'Noah',w:['Moses','David','Jesus']},
+  {q:'Who defeated the giant Goliath?',a:'David',w:['Jonah','Noah','Peter']},
+  {q:'Who was swallowed by a big fish?',a:'Jonah',w:['Moses','David','Paul']},
+  {q:'What did God put in the sky after the flood?',a:'Rainbow 🌈',w:['Star ⭐','Sun ☀️','Cloud ☁️']},
+  {q:'How many days did it rain for Noah?',a:'40 days',w:['7 days','3 days','100 days']},
+  {q:'Who loves ALL the children?',a:'Jesus',w:['Noah','David','Jonah']},
+  {q:'What did God make on the very first day?',a:'Light 💡',w:['Animals 🦁','People 👤','Fish 🐟']},
+  {q:'In John 3:16, what did God give to the world?',a:'His only Son',w:['A rainbow','The earth','A fish']},
+];
+let bibleTab='verses',bqIdx=0;
+function setBibleTab(tab,btn){
+  bibleTab=tab;
+  document.querySelectorAll('.bible-nav-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  ['verses','stories','quiz'].forEach(t=>{
+    const el=document.getElementById('bpanel-'+t);
+    if(el) el.style.display=t===tab?'block':'none';
+  });
+  if(tab==='quiz') newBibleQ();
+}
+function buildBibleVerses(){
+  const c=document.getElementById('bpanel-verses');c.innerHTML='';
+  bibleVerses.forEach((v,i)=>{
+    const d=document.createElement('div');d.className='bible-verse-card';
+    d.style.background=v.bg;
+    d.innerHTML=`<div class="bvc-ref">${v.ref}</div><div class="bvc-verse">"${v.text}"</div><div class="bvc-lesson">💡 ${v.lesson}</div><span class="bvc-emoji">${v.emoji}</span>`;
+    d.onclick=()=>{celebrate();};
+    c.appendChild(d);
+  });
+}
+function buildBibleStories(){
+  const c=document.getElementById('bpanel-stories');c.innerHTML='';
+  bibleStories.forEach(s=>{
+    const d=document.createElement('div');d.className='bible-verse-card';
+    d.style.background=s.bg;
+    d.innerHTML=`<div class="bvc-ref">${s.emoji} ${s.title}</div><div class="bvc-verse" style="font-size:.95rem;font-family:Nunito,sans-serif;font-weight:700;">${s.text}</div><div class="bvc-lesson">💡 ${s.lesson}</div>`;
+    c.appendChild(d);
+  });
+}
+let bqAns='';
+function newBibleQ(){
+  const q=bibleQuiz[bqIdx%bibleQuiz.length];bqIdx++;
+  bqAns=q.a;
+  document.getElementById('bibleQ').textContent=q.q;
+  const choices=[q.a,...q.w].sort(()=>Math.random()-.5);
+  const cc=document.getElementById('bibleChoices');cc.innerHTML='';
+  choices.forEach(ch=>{
+    const b=document.createElement('button');b.className='bchoice';b.textContent=ch;
+    b.onclick=()=>{
+      if(ch===bqAns){b.classList.add('correct');celebrate();setTimeout(newBibleQ,1200);}
+      else{b.classList.add('wrong');setTimeout(()=>b.classList.remove('wrong'),600);}
+    };cc.appendChild(b);
+  });
+}
+buildBibleVerses();buildBibleStories();newBibleQ();
+
+// ── SIGHT WORDS ──
+const SW=[
+  {w:'the',h:'🐶\nThe dog is big!'},
+  {w:'and',h:'👨‍👩‍👦\nMom and Dad!'},
+  {w:'a',h:'🐱\nI see a cat.'},
+  {w:'to',h:'🏫\nI go to school.'},
+  {w:'I',h:'😊\nI am happy!'},
+  {w:'you',h:'👈\nI like you!'},
+  {w:'it',h:'👆\nIt is big!'},
+  {w:'in',h:'📦\nThe cat is in the box.'},
+  {w:'is',h:'☀️\nThe sun is yellow.'},
+  {w:'was',h:'🌧️\nIt was raining.'},
+  {w:'he',h:'👦\nHe is my friend.'},
+  {w:'she',h:'💃\nShe loves to dance.'},
+  {w:'we',h:'👫\nWe are twins!'},
+  {w:'on',h:'⚽\nThe ball is on the floor.'},
+  {w:'are',h:'🐕\nDogs are fluffy.'},
+  {w:'go',h:'🏃\nGo fast!'},
+  {w:'can',h:'🦘\nI can jump high!'},
+  {w:'see',h:'🌙\nI see the moon.'},
+  {w:'like',h:'🍦\nI like ice cream!'},
+  {w:'big',h:'🐘\nAn elephant is big.'},
+  {w:'play',h:'🛝\nI play outside!'},
+  {w:'run',h:'🏃\nI can run fast!'},
+  {w:'up',h:'☁️\nLook up at the sky!'},
+  {w:'not',h:'😤\nI do not like bugs!'},
+  {w:'look',h:'👀\nLook at that!'},
+  {w:'my',h:'🧸\nThat is my toy!'},
+  {w:'at',h:'🏠\nI am at home.'},
+  {w:'be',h:'💛\nBe kind!'},
+  {w:'here',h:'📍\nCome here!'},
+  {w:'down',h:'🌅\nThe sun goes down.'},
+];
+let sIdx=0,sSeen=new Set();
+function buildSightDots(){
+  const c=document.getElementById('sightDots');c.innerHTML='';
+  SW.forEach((sw,i)=>{
+    const d=document.createElement('div');d.className='pdot'+(sSeen.has(i)?' seen':'')+(i===sIdx?' cur':'');
+    d.textContent=sw.w.substring(0,3);d.onclick=()=>{sIdx=i;updateSight();};c.appendChild(d);
+  });
+}
+function updateSight(){
+  const sw=SW[sIdx];
+  document.getElementById('sightWord').textContent=sw.w;
+  document.getElementById('sightHint').textContent=sw.h;
+  document.getElementById('sightCard').classList.remove('flipped');
+  sSeen.add(sIdx);
+  const pct=Math.round(sSeen.size/SW.length*100);
+  document.getElementById('sightScore').textContent=`${sSeen.size}/${SW.length} — ${pct}%!`;
+  document.getElementById('sightStars').textContent=pct>=80?'⭐⭐⭐':pct>=50?'⭐⭐':'⭐';
+  buildSightDots();
+}
+function flipCard(){document.getElementById('sightCard').classList.toggle('flipped');}
+function nextWord(){sIdx=(sIdx+1)%SW.length;updateSight();}
+function prevWord(){sIdx=(sIdx-1+SW.length)%SW.length;updateSight();}
+function resetSight(){sIdx=0;sSeen=new Set();updateSight();}
+updateSight();
+
+// ── PHONICS ──
+const PD=[
+  {l:'A',ph:'/æ/',ex:'apple, ant'},{l:'B',ph:'/b/',ex:'ball, bus'},{l:'C',ph:'/k/',ex:'cat, cup'},
+  {l:'D',ph:'/d/',ex:'dog, dad'},{l:'E',ph:'/ɛ/',ex:'egg, end'},{l:'F',ph:'/f/',ex:'fish, fun'},
+  {l:'G',ph:'/g/',ex:'go, got'},{l:'H',ph:'/h/',ex:'hat, hop'},{l:'I',ph:'/ɪ/',ex:'it, ink'},
+  {l:'J',ph:'/dʒ/',ex:'jump, jar'},{l:'K',ph:'/k/',ex:'kite, kid'},{l:'L',ph:'/l/',ex:'lion, leg'},
+  {l:'M',ph:'/m/',ex:'mom, map'},{l:'N',ph:'/n/',ex:'nap, net'},{l:'O',ph:'/ɒ/',ex:'on, odd'},
+  {l:'P',ph:'/p/',ex:'pig, pop'},{l:'Q',ph:'/kw/',ex:'queen, quit'},{l:'R',ph:'/r/',ex:'run, red'},
+  {l:'S',ph:'/s/',ex:'sun, sat'},{l:'T',ph:'/t/',ex:'top, tap'},{l:'U',ph:'/ʌ/',ex:'up, us'},
+  {l:'V',ph:'/v/',ex:'van, vet'},{l:'W',ph:'/w/',ex:'web, win'},{l:'X',ph:'/ks/',ex:'box, fox'},
+  {l:'Y',ph:'/j/',ex:'yes, yak'},{l:'Z',ph:'/z/',ex:'zoo, zip'},
+];
+const rhymes=[
+  {w:'cat',ok:'bat',no:['sun','dog']},{w:'big',ok:'pig',no:['hat','run']},
+  {w:'hop',ok:'top',no:['cat','fish']},{w:'red',ok:'bed',no:['hop','big']},
+  {w:'sun',ok:'fun',no:['red','top']},{w:'cake',ok:'lake',no:['dog','cup']},
+  {w:'bug',ok:'hug',no:['cake','sun']},{w:'day',ok:'play',no:['bug','cat']},
+];
+let rhymeIdx=0;
+function buildPhonics(){
+  const g=document.getElementById('phonicsGrid');g.innerHTML='';
+  PD.forEach((pd,i)=>{
+    const c=document.createElement('div');c.className='pcard';
+    c.innerHTML=`<span class="pcard-letter" style="color:${LC[i%LC.length]}">${pd.l}</span><div class="pcard-phoneme">${pd.ph}</div>`;
+    c.onclick=()=>{
+      document.querySelectorAll('.pcard').forEach(x=>x.classList.remove('playing'));
+      c.classList.add('playing');
+      if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance();u.text=`The letter ${pd.l} says ${pd.ph}. Example: ${pd.ex}`;u.rate=.8;u.pitch=1.1;speechSynthesis.speak(u);}
+      setTimeout(()=>c.classList.remove('playing'),900);
+    };
+    g.appendChild(c);
+  });
+}
+function newRhyme(){
+  const r=rhymes[rhymeIdx%rhymes.length];rhymeIdx++;
+  document.getElementById('rhymeWord').textContent=r.w;
+  const cs=[r.ok,...r.no].sort(()=>Math.random()-.5);
+  const cc=document.getElementById('rhymeChoices');cc.innerHTML='';
+  cs.forEach(w=>{
+    const b=document.createElement('button');b.className='choice-btn';b.style.fontSize='.95rem';b.textContent=w;
+    b.onclick=()=>{if(w===r.ok){b.classList.add('correct');celebrate();setTimeout(newRhyme,1100);}else{b.classList.add('wrong');setTimeout(()=>b.classList.remove('wrong'),600);}};
+    cc.appendChild(b);
+  });
+}
+buildPhonics();newRhyme();
+
+// ── MATH ──
+const ME=['🍎','🌟','🐱','🐶','🎈','🦋','🍕','🌈'];
+let mCorr=0,mTot=0,tapAns=0,tapCount=0;
+function setMtab(id,btn){
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.math-panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');document.getElementById('mp-'+id).classList.add('on');
+  if(id==='add')newAdd();else if(id==='sub')newSub();else if(id==='pat')newPat();else newTap();
+}
+function mathRes(ok){
+  mTot++;if(ok){mCorr++;celebrate();}
+  const pct=mTot?Math.round(mCorr/mTot*100):0;
+  document.getElementById('mathScore').textContent=`${mCorr}/${mTot} — ${pct}%!`;
+  document.getElementById('mathStars').textContent=pct>=80?'⭐⭐⭐':pct>=50?'⭐⭐':'⭐';
+}
+function resetMath(){mCorr=0;mTot=0;document.getElementById('mathScore').textContent="Let's go!";document.getElementById('mathStars').textContent='⭐⭐⭐';newAdd();newSub();newPat();newTap();}
+function newAdd(){
+  const a=Math.floor(Math.random()*5)+1,b=Math.floor(Math.random()*5)+1,ans=a+b;
+  const em=ME[Math.floor(Math.random()*ME.length)];
+  document.getElementById('addEq').innerHTML=`<div class="eq-tile">${a}</div><div class="eq-op">+</div><div class="eq-tile">${b}</div><div class="eq-op">=</div><div class="eq-blank">?</div>`;
+  document.getElementById('addObjs').innerHTML=em.repeat(a)+'  +  '+em.repeat(b);
+  const cs=[ans,ans===1?2:ans-1,ans>=10?ans-2:ans+1].sort(()=>Math.random()-.5);
+  const cc=document.getElementById('addChoices');cc.innerHTML='';
+  cs.forEach(n=>{const b2=document.createElement('button');b2.className='choice-btn';b2.textContent=n;b2.onclick=()=>{if(n===ans){b2.classList.add('correct');mathRes(true);setTimeout(newAdd,1100);}else{b2.classList.add('wrong');mathRes(false);setTimeout(()=>b2.classList.remove('wrong'),600);}};cc.appendChild(b2);});
+}
+function newSub(){
+  const b=Math.floor(Math.random()*4)+1,a=b+Math.floor(Math.random()*5)+1,ans=a-b;
+  const em=ME[Math.floor(Math.random()*ME.length)];
+  document.getElementById('subEq').innerHTML=`<div class="eq-tile">${a}</div><div class="eq-op">−</div><div class="eq-tile">${b}</div><div class="eq-op">=</div><div class="eq-blank">?</div>`;
+  document.getElementById('subObjs').innerHTML=em.repeat(a);
+  const cs=[ans,ans===0?1:ans-1,ans>=9?ans-2:ans+1].sort(()=>Math.random()-.5);
+  const cc=document.getElementById('subChoices');cc.innerHTML='';
+  cs.forEach(n=>{const b2=document.createElement('button');b2.className='choice-btn';b2.textContent=n;b2.onclick=()=>{if(n===ans){b2.classList.add('correct');mathRes(true);setTimeout(newSub,1100);}else{b2.classList.add('wrong');mathRes(false);setTimeout(()=>b2.classList.remove('wrong'),600);}};cc.appendChild(b2);});
+}
+const pats=[
+  {s:['🔴','🔵','🔴','🔵','🔴'],a:'🔵',c:['🔵','🟡','🟢']},
+  {s:['⭐','⭐','🌙','⭐','⭐'],a:'🌙',c:['🌙','☀️','⭐']},
+  {s:['🐱','🐶','🐱','🐶','🐱'],a:'🐶',c:['🐶','🐱','🐟']},
+  {s:['🍎','🍌','🍊','🍎','🍌'],a:'🍊',c:['🍊','🍇','🍎']},
+  {s:['🌈','☀️','🌈','☀️','🌈'],a:'☀️',c:['☀️','🌧️','🌈']},
+];
+let patIdx=0;
+function newPat(){
+  const p=pats[patIdx%pats.length];patIdx++;
+  const row=document.getElementById('patRow');row.innerHTML='';
+  p.s.forEach(e=>{const s=document.createElement('span');s.textContent=e;row.appendChild(s);});
+  const blank=document.createElement('span');blank.textContent='❓';blank.style.fontSize='2.2rem';row.appendChild(blank);
+  const cc=document.getElementById('patChoices');cc.innerHTML='';
+  p.c.forEach(ch=>{
+    const b=document.createElement('button');b.className='choice-btn';b.textContent=ch;
+    b.onclick=()=>{if(ch===p.a){blank.textContent=ch;mathRes(true);setTimeout(newPat,1100);}else{b.classList.add('wrong');mathRes(false);setTimeout(()=>b.classList.remove('wrong'),600);}};
+    cc.appendChild(b);
+  });
+}
+function newTap(){
+  tapAns=Math.floor(Math.random()*8)+2;tapCount=0;
+  const em=ME[Math.floor(Math.random()*ME.length)];
+  const zone=document.getElementById('tapObjs');zone.innerHTML='';
+  for(let i=0;i<tapAns;i++){
+    const s=document.createElement('span');s.textContent=em;s.style.cursor='pointer';s.style.transition='transform .15s';
+    s.onclick=function(){
+      tapCount++;this.style.transform='scale(1.4)';this.style.opacity='.4';
+      document.getElementById('tapResult').textContent=tapCount+'';
+      if(tapCount>=tapAns){mathRes(true);setTimeout(newTap,1100);}
+    };zone.appendChild(s);
+  }
+  document.getElementById('tapResult').textContent='Tap each one! 👆';
+}
+newAdd();newSub();newPat();newTap();
+
+// ── STORIES ──
+const stories=[
+  {t:'The Sunny Day',i:'☀️',p:[
+    {sc:'🌙',tx:'It was early morning. The sky was dark and quiet.'},
+    {sc:'☀️',tx:'Then the Sun woke up! It stretched and yawned.'},
+    {sc:'🌤️',tx:'"Good morning!" said the Sun. "Time to shine!"'},
+    {sc:'🌈🌳',tx:'The flowers opened. The birds sang. Everything was warm.'},
+    {sc:'🏃‍♂️😊',tx:'A little child ran outside to play in the sunshine.'},
+    {sc:'⭐☀️⭐',tx:'"I love sunny days!" The End. 🌟'},
+  ]},
+  {t:'Two Ducks',i:'🦆',p:[
+    {sc:'🏞️',tx:'Once there were two little ducks by the pond.'},
+    {sc:'🦆🦆',tx:'"Let\'s count! One, two — just us two!"'},
+    {sc:'🐸',tx:'A frog jumped in. Now there were three friends!'},
+    {sc:'🦆🦆🐸🐢',tx:'A turtle swam over. Now there were four!'},
+    {sc:'🦆🦆🐸🐢🐟',tx:'A fish splashed up! Can you count all five?'},
+    {sc:'🌟🦆',tx:'The ducks swam home happy. The End! 🌟'},
+  ]},
+  {t:'Shape Family',i:'🔷',p:[
+    {sc:'🏠',tx:'One day, the Shape Family went for a walk!'},
+    {sc:'⭕',tx:'Circle was round and rolled down the hill. "Wheeee!"'},
+    {sc:'🔺',tx:'Triangle had three points and liked to point up high.'},
+    {sc:'⬛',tx:'Square had four equal sides and stood tall and proud.'},
+    {sc:'⭕🔺⬛',tx:'Together they made a house! Circle, triangle, and square!'},
+    {sc:'🏠✨',tx:'Can you find shapes around you? The End! 🌟'},
+  ]},
+  {t:'Colors!',i:'🎨',p:[
+    {sc:'🎨',tx:'Mia opened her paint set. So many colors!'},
+    {sc:'🔴',tx:'She painted a big red apple. Round and shiny!'},
+    {sc:'🔵',tx:'She painted a blue sky with fluffy clouds.'},
+    {sc:'🟡',tx:'She painted a yellow sun. It made everything bright!'},
+    {sc:'🟢💜🟠',tx:'Green grass, purple flowers, orange butterflies!'},
+    {sc:'🌈',tx:'"Colors make the world beautiful!" The End! 🌟'},
+  ]},
+  {t:'Big Jump!',i:'🐸',p:[
+    {sc:'🐸',tx:'Freddie Frog sat by the pond looking at a big rock.'},
+    {sc:'😨🪨',tx:'"That rock is SO far away. I cannot jump that far!"'},
+    {sc:'🦋',tx:'A butterfly said, "Try it! You are a great jumper!"'},
+    {sc:'🐸💪',tx:'Freddie took a deep breath. He bent his knees. He jumped!'},
+    {sc:'🐸🪨⭐',tx:'He landed on the rock! He did it!'},
+    {sc:'🐸🌟',tx:'"I can do hard things!" The End! 🌟'},
+  ]},
+];
+let sStory=0,sPage=0;
+function buildStoryTabs(){
+  const c=document.getElementById('storyTabs');c.innerHTML='';
+  stories.forEach((s,i)=>{
+    const b=document.createElement('button');b.className='stab'+(i===0?' on':'');
+    b.innerHTML=`${s.i} ${s.t}`;
+    b.onclick=()=>{document.querySelectorAll('.stab').forEach(x=>x.classList.remove('on'));b.classList.add('on');sStory=i;sPage=0;renderStory();};
+    c.appendChild(b);
+  });
+}
+function renderStory(){
+  const s=stories[sStory],p=s.p[sPage];
+  const sc=document.getElementById('storyScene');
+  sc.style.animation='none';requestAnimationFrame(()=>{sc.style.animation='';});
+  sc.textContent=p.sc;
+  document.getElementById('storyText').innerHTML=p.tx.replace(/(\w+)/g,'<span class="sw" onclick="this.classList.toggle(\'lit\')">$1</span>');
+  document.getElementById('sCtr').textContent=`${sPage+1} / ${s.p.length}`;
+  document.getElementById('sPrev').disabled=sPage===0;
+  document.getElementById('sNext').disabled=sPage===s.p.length-1;
+}
+function sNav(d){sPage=Math.max(0,Math.min(stories[sStory].p.length-1,sPage+d));renderStory();}
+buildStoryTabs();renderStory();
+
+// ── WRITING ──
+let wMode='name',wLetter=null,wAge=null;
+(function(){
+  const g=document.getElementById('wAlpha');
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(ch=>{
+    const b=document.createElement('button');b.className='wabc';b.textContent=ch;
+    b.onclick=()=>{document.querySelectorAll('.wabc').forEach(x=>x.classList.remove('on'));b.classList.add('on');wLetter=ch;makeWS();};
+    g.appendChild(b);
+  });
+})();
+function setWTab(m,btn){
+  wMode=m;
+  document.querySelectorAll('.wtab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.w-panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('wp-'+m).classList.add('on');
+  if(m==='name'){const v=document.getElementById('wName').value.trim();if(v)makeWS();}
+}
+function wRand(w){wMode='random';renderWS(w.toUpperCase());}
+function makeWS(fw){
+  if(fw){renderWS(fw);return;}
+  if(wMode==='name'){const v=document.getElementById('wName').value.trim();if(v)renderWS(v.toUpperCase());}
+  else if(wMode==='letter'){if(wLetter)renderWS(wLetter);}
+  else if(wMode==='word'){const v=document.getElementById('wWord').value.trim();if(v)renderWS(v.toUpperCase());else alert('Type a word first!');}
+}
+function renderWS(word){
+  const canvas=document.getElementById('worksheetCanvas');
+  const PW=720,PH=960;
+  canvas.width=PW;canvas.height=PH;canvas.style.width='calc(100% - 32px)';canvas.style.height='auto';
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='white';ctx.fillRect(0,0,PW,PH);
+  ctx.fillStyle='#222';ctx.font='800 18px Nunito,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('Name:',0,28);
+  ctx.strokeStyle='#444';ctx.lineWidth=1.5;ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(72,30);ctx.lineTo(PW,30);ctx.stroke();
+  let y=56;const exH=140,lH=exH*.82,bY=y+exH*.12+lH;
+  function rules(x,ry,w,h){
+    ctx.strokeStyle='#bbb';ctx.lineWidth=1.2;ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(x,ry);ctx.lineTo(x+w,ry);ctx.stroke();
+    ctx.strokeStyle='#ccc';ctx.lineWidth=1;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(x,ry+h*.45);ctx.lineTo(x+w,ry+h*.45);ctx.stroke();
+    ctx.strokeStyle='#bbb';ctx.lineWidth=1.2;ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(x,ry+h);ctx.lineTo(x+w,ry+h);ctx.stroke();ctx.setLineDash([]);
+  }
+  rules(0,y+exH*.12,PW,lH);
+  const n=word.length,mLW=Math.min(140,(PW-40)/n),startX=(PW-mLW*n)/2+mLW/2;
+  for(let i=0;i<n;i++)drawTraceLetter(ctx,word[i],startX+i*mLW,bY,lH*.88,'#222','#222');
+  y+=exH+20;const rH=100,rLH=rH*.82;
+  const isLetter=wMode==='letter';
+  for(let r=0;r<7;r++){
+    const rY=y+r*(rH+8),rBase=rY+rH*.12+rLH;
+    rules(0,rY+rH*.12,PW,rLH);
+    if(isLetter){const sw=PW/6;for(let c=0;c<6;c++)drawTraceLetter(ctx,word[0],sw*c+sw/2,rBase,rLH*.84,'#ccc','#aaa');}
+    else{const pw=n*56+20,cp=Math.max(1,Math.min(4,Math.floor(PW/pw))),gap=PW/cp;for(let c=0;c<cp;c++){const wCx=gap*c+gap/2,wLW=Math.min(gap/n*.88,58),wT=wLW*n,wS=wCx-wT/2+wLW/2;for(let li=0;li<n;li++)drawTraceLetter(ctx,word[li],wS+li*wLW,rBase,rLH*.86,'#ccc','#aaa');}}
+  }
+  ctx.font='700 12px Nunito,sans-serif';ctx.fillStyle='#ccc';ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText('🌟 Little Learners — Handwriting Practice',PW/2,PH-4);
+}
+function openAgeModal(){wAge=null;document.querySelectorAll('.abtn').forEach(b=>b.classList.remove('on'));document.getElementById('mGo').disabled=true;document.getElementById('mLoad').style.display='none';document.getElementById('ageModal').classList.add('open');}
+function closeModal(){document.getElementById('ageModal').classList.remove('open');}
+function selAge(age,btn){wAge=age;document.querySelectorAll('.abtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('mGo').disabled=false;}
+function doAge(){
+  if(!wAge)return;
+  document.getElementById('mGo').disabled=true;document.getElementById('mLoad').style.display='block';
+  const wl={3:['CAT','DOG','SUN','CUP','HAT','RUN','HOP','MOM'],4:['JUMP','FISH','BIRD','BLUE','PLAY','RAIN','TREE','DUCK'],5:['HAPPY','APPLE','GREEN','CLOUD','HOUSE','WATER','TIGER','DANCE'],6:['PURPLE','DRAGON','FLOWER','SCHOOL','FRIEND','TURTLE','CASTLE'],7:['DOLPHIN','PENGUIN','BLANKET','CHICKEN','CAPTAIN','MORNING'],8:['ELEPHANT','BIRTHDAY','MOUNTAIN','PRINCESS','TREASURE'],9:['ADVENTURE','BEAUTIFUL','CHOCOLATE','WONDERFUL'],10:['KNOWLEDGE','TECHNOLOGY','VOCABULARY','MYSTERIOUS']};
+  setTimeout(()=>{
+    const list=wl[wAge]||wl[5],word=list[Math.floor(Math.random()*list.length)];
+    wMode='word';document.querySelectorAll('.wtab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.wtab')[2].classList.add('on');
+    document.querySelectorAll('.w-panel').forEach(p=>p.classList.remove('on'));document.getElementById('wp-word').classList.add('on');
+    document.getElementById('wWord').value=word;
+    document.getElementById('mLoad').style.display='none';document.getElementById('mGo').disabled=false;
+    closeModal();renderWS(word);
+  },800);
+}
+document.getElementById('ageModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// ── INIT ──
+window.addEventListener('load',()=>{
+  document.getElementById('wName').value='Henley';
+  makeWS();
+});
+</script>
+</body>
+</html>
