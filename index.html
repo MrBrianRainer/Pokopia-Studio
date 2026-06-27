@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pokopia Builder — AI 3D World Generator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cyan: #5af;
+    --cyan-dim: #2a6a9a;
+    --gold: #ffd84d;
+    --bg: #07090f;
+    --panel: rgba(8,10,24,0.93);
+    --border: 2px solid #5af;
+    --radius: 8px;
+    --font-pixel: 'Press Start 2P', monospace;
+    --font-mono: 'Share Tech Mono', 'Courier New', monospace;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: #d0e8ff;
+    font-family: var(--font-mono);
+    overflow: hidden;
+  }
+
+  /* ── LANDING SCREEN ── */
+  #landing {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at 50% 40%, #0a1832 0%, #07090f 70%);
+    z-index: 100;
+    padding: 24px;
+    overflow-y: auto;
+  }
+
+  #landing.hidden { display: none; }
+
+  .logo-wrap {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .logo-main {
+    font-family: var(--font-pixel);
+    font-size: clamp(18px, 4vw, 32px);
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(255,216,77,0.5), 0 2px 0 #a07000;
+    line-height: 1.4;
+  }
+
+  .logo-sub {
+    font-family: var(--font-pixel);
+    font-size: clamp(8px, 1.5vw, 11px);
+    color: var(--cyan);
+    letter-spacing: 4px;
+    margin-top: 8px;
+    opacity: 0.8;
+  }
+
+  .pokeball-anim {
+    width: 80px; height: 80px;
+    margin: 0 auto 20px;
+    animation: spin 6s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  .input-card {
+    background: var(--panel);
+    border: var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    width: 100%;
+    max-width: 640px;
+    box-shadow: 0 0 40px rgba(85,170,255,0.15);
+  }
+
+  .input-card h2 {
+    font-family: var(--font-pixel);
+    font-size: clamp(9px, 2vw, 13px);
+    color: var(--cyan);
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+
+  .tab-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: rgba(85,170,255,0.08);
+    border: 1px solid var(--cyan-dim);
+    border-radius: 6px;
+    color: #88bbdd;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active {
+    background: rgba(85,170,255,0.22);
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  .tab-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  textarea {
+    width: 100%;
+    height: 120px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--cyan-dim);
+    border-radius: 6px;
+    color: #d0e8ff;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    padding: 12px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  textarea:focus { border-color: var(--cyan); }
+  textarea::placeholder { color: #445566; }
+
+  .image-drop {
+    width: 100%;
+    height: 140px;
+    border: 2px dashed var(--cyan-dim);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(0,0,0,0.3);
+    position: relative;
+  }
+
+  .image-drop:hover, .image-drop.drag-over {
+    border-color: var(--cyan);
+    background: rgba(85,170,255,0.06);
+  }
+
+  .image-drop span {
+    font-size: 13px;
+    color: #6688aa;
+    text-align: center;
+    padding: 0 16px;
+  }
+
+  .image-drop .icon { font-size: 32px; }
+
+  #img-preview {
+    width: 100%;
+    max-height: 140px;
+    object-fit: contain;
+    border-radius: 4px;
+    display: none;
+  }
+
+  #file-input { display: none; }
+
+  .both-row {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+  }
+
+  .examples {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ex-chip {
+    background: rgba(85,170,255,0.1);
+    border: 1px solid rgba(85,170,255,0.3);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    color: #88bbdd;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .ex-chip:hover {
+    background: rgba(85,170,255,0.2);
+    color: var(--cyan);
+    border-color: var(--cyan);
+  }
+
+  .build-btn {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+    background: linear-gradient(135deg, #1a4a8a, #0d2a5a);
+    border: var(--border);
+    border-radius: 6px;
+    color: var(--cyan);
+    font-family: var(--font-pixel);
+    font-size: clamp(9px, 2vw, 12px);
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .build-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2a5aaa, #1a3a7a);
+    box-shadow: 0 0 20px rgba(85,170,255,0.3);
+  }
+
+  .build-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .disclaimer {
+    margin-top: 16px;
+    font-size: 10px;
+    color: #445566;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* ── LOADING SCREEN ── */
+  #loading {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 90;
+    gap: 20px;
+  }
+
+  #loading.active { display: flex; }
+
+  .load-title {
+    font-family: var(--font-pixel);
+    font-size: clamp(10px, 2.5vw, 16px);
+    color: var(--gold);
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+  .load-status {
+    font-size: 13px;
+    color: var(--cyan);
+    min-height: 20px;
+    text-align: center;
+  }
+
+  .progress-bar {
+    width: min(400px, 80vw);
+    height: 6px;
+    background: rgba(85,170,255,0.15);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan), var(--gold));
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  .pixelballs {
+    display: flex;
+    gap: 16px;
+  }
+
+  .pball {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    animation: blink 1.2s infinite;
+  }
+
+  .pball:nth-child(1) { background: #f44; animation-delay: 0s; }
+  .pball:nth-child(2) { background: var(--gold); animation-delay: 0.2s; }
+  .pball:nth-child(3) { background: #5af; animation-delay: 0.4s; }
+
+  @keyframes blink {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1.1); }
+  }
+
+  /* ── VIEWER FRAME ── */
+  #viewer-wrap {
+    position: fixed; inset: 0;
+    display: none;
+  }
+
+  #viewer-wrap.active { display: block; }
+
+  #viewer-frame {
+    width: 100%; height: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* ── BACK BUTTON ── */
+  #back-btn {
+    position: fixed;
+    top: 12px; left: 12px;
+    z-index: 200;
+    display: none;
+    background: var(--panel);
+    border: var(--border);
+    border-radius: 6px;
+    color: var(--cyan);
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    padding: 8px 14px;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+
+  #back-btn.active { display: block; }
+  #back-btn:hover { background: rgba(85,170,255,0.15); }
+
+  /* ── ERROR ── */
+  #error-msg {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(255,60,60,0.1);
+    border: 1px solid rgba(255,60,60,0.4);
+    border-radius: 6px;
+    color: #ff8888;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="landing">
+  <div class="logo-wrap">
+    <svg class="pokeball-anim" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="40" cy="40" r="38" fill="#222" stroke="#5af" stroke-width="2"/>
+      <path d="M2 40 Q2 2 40 2 Q78 2 78 40Z" fill="#cc3344"/>
+      <rect x="2" y="37" width="76" height="6" fill="#5af"/>
+      <circle cx="40" cy="40" r="10" fill="#111" stroke="#5af" stroke-width="2"/>
+      <circle cx="40" cy="40" r="5" fill="#5af"/>
+    </svg>
+    <div class="logo-main">POKOPIA BUILDER</div>
+    <div class="logo-sub">AI-POWERED 3D WORLD GENERATOR</div>
+  </div>
+
+  <div class="input-card">
+    <h2>▸ DESCRIBE YOUR BUILD</h2>
+
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchTab('prompt')">✏️ Text Prompt</button>
+      <button class="tab-btn" onclick="switchTab('image')">🖼️ Image</button>
+      <button class="tab-btn" onclick="switchTab('both')">✨ Both</button>
+    </div>
+
+    <!-- TEXT TAB -->
+    <div class="tab-panel active" id="tab-prompt">
+      <textarea id="prompt-text" placeholder="e.g. A cozy lakeside fishing village with wooden docks, lanterns, and a market stall..."></textarea>
+      <div class="examples">
+        <span class="ex-chip" onclick="setExample('A medieval castle with stone towers, iron gates, and a courtyard fountain')">🏰 Castle</span>
+        <span class="ex-chip" onclick="setExample('A cozy witch cottage in the woods with glowing mushrooms, cauldron, and mossy stone path')">🍄 Witch Cottage</span>
+        <span class="ex-chip" onclick="setExample('A Japanese shrine with a torii gate, stone lanterns, and cherry blossom trees')">⛩️ Shrine</span>
+        <span class="ex-chip" onclick="setExample('An underwater Pokémon research lab with crystal walls, bubble pipes, and aquarium tanks')">🌊 Underwater Lab</span>
+        <span class="ex-chip" onclick="setExample('A bustling port town with wooden docks, a lighthouse, market stalls, and fishing boats')">⚓ Port Town</span>
+        <span class="ex-chip" onclick="setExample('A Pokémon Center with modern doors, neon flooring, a counter desk, and garden lights outside')">🏥 Pokémon Center</span>
+      </div>
+    </div>
+
+    <!-- IMAGE TAB -->
+    <div class="tab-panel" id="tab-image">
+      <div class="image-drop" id="drop-zone" onclick="document.getElementById('file-input').click()">
+        <span class="icon">📷</span>
+        <span>Click or drag & drop an image<br>(JPG, PNG, WEBP)</span>
+        <img id="img-preview" alt="preview"/>
+      </div>
+      <input type="file" id="file-input" accept="image/*" onchange="handleFile(this.files[0])"/>
+    </div>
+
+    <!-- BOTH TAB -->
+    <div class="tab-panel" id="tab-both">
+      <div class="both-row">
+        <textarea id="both-text" placeholder="Describe the style, mood, or extra details..."></textarea>
+        <div class="image-drop" id="drop-zone-2" onclick="document.getElementById('file-input-2').click()">
+          <span class="icon">📷</span>
+          <span>Click or drag & drop an image</span>
+          <img id="img-preview-2" alt="preview"/>
+        </div>
+        <input type="file" id="file-input-2" accept="image/*" onchange="handleFile2(this.files[0])"/>
+      </div>
+    </div>
+
+    <div id="error-msg"></div>
+
+    <button class="build-btn" id="build-btn" onclick="startBuild()">⬡ GENERATE POKOPIA BUILD ⬡</button>
+
+    <p class="disclaimer">Builds take 20–60 seconds to generate.<br>Each build creates a unique 3D interactive scene.<br><span id="proxy-status" style="color:#5af">⚙ Click Setup (top-right) to configure your proxy URL.</span></p>
+  </div>
+</div>
+
+<!-- SETUP BUTTON -->
+<button id="setup-btn" onclick="openSetup()" style="
+  position:fixed;top:12px;right:12px;z-index:300;
+  background:rgba(8,10,24,0.93);border:2px solid #5af;border-radius:6px;
+  color:#5af;font-family:'Share Tech Mono','Courier New',monospace;font-size:13px;
+  padding:8px 14px;cursor:pointer;letter-spacing:1px;">⚙ Setup</button>
+
+<!-- SETUP MODAL -->
+<div id="setup-modal" style="
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
+  <div style="
+    background:rgba(8,10,24,0.97);border:2px solid #5af;border-radius:10px;
+    padding:28px;max-width:500px;width:90%;font-family:'Share Tech Mono','Courier New',monospace;">
+    <h2 style="font-size:13px;color:#5af;margin-bottom:16px;letter-spacing:1px;">⚙ PROXY SETUP</h2>
+    <p style="font-size:12px;color:#88bbdd;line-height:1.7;margin-bottom:16px;">
+      Deploy <code style="color:#ffd84d">server.js</code> (included in your download) to any free host,
+      then paste the URL below. The proxy forwards requests to Anthropic on your behalf.
+    </p>
+    <p style="font-size:11px;color:#667788;margin-bottom:6px;">Free hosting options: <a href="https://railway.app" target="_blank" style="color:#5af">Railway</a> · <a href="https://render.com" target="_blank" style="color:#5af">Render</a> · <a href="https://fly.io" target="_blank" style="color:#5af">Fly.io</a></p>
+    <input id="proxy-input" type="url" placeholder="https://your-proxy.railway.app" style="
+      width:100%;padding:10px 12px;margin:12px 0;
+      background:rgba(0,0,0,0.4);border:1px solid #2a6a9a;border-radius:6px;
+      color:#d0e8ff;font-family:'Share Tech Mono','Courier New',monospace;font-size:13px;outline:none;"/>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button onclick="saveProxy()" style="
+        flex:1;padding:10px;background:rgba(85,170,255,0.15);border:2px solid #5af;
+        border-radius:6px;color:#5af;font-family:'Share Tech Mono',monospace;font-size:13px;cursor:pointer;">
+        ✓ Save
+      </button>
+      <button onclick="closeSetup()" style="
+        flex:1;padding:10px;background:transparent;border:1px solid #445566;
+        border-radius:6px;color:#667788;font-family:'Share Tech Mono',monospace;font-size:13px;cursor:pointer;">
+        Cancel
+      </button>
+    </div>
+    <p id="setup-msg" style="font-size:11px;margin-top:10px;min-height:16px;color:#5af;"></p>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="pixelballs">
+    <div class="pball"></div>
+    <div class="pball"></div>
+    <div class="pball"></div>
+  </div>
+  <div class="load-title">BUILDING YOUR WORLD…</div>
+  <div class="load-status" id="load-status">Contacting the PC Box…</div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+</div>
+
+<!-- VIEWER -->
+<div id="viewer-wrap">
+  <iframe id="viewer-frame" sandbox="allow-scripts allow-same-origin"></iframe>
+</div>
+
+<!-- BACK BUTTON -->
+<button id="back-btn" onclick="goBack()">◀ NEW BUILD</button>
+
+<script>
+// ── STATE ──
+let activeTab = 'prompt';
+let imageData = null;   // base64 no prefix
+let imageType = null;
+let imageData2 = null;
+let imageType2 = null;
+
+function switchTab(t) {
+  activeTab = t;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['prompt','image','both'][i] === t);
+  });
+  document.querySelectorAll('.tab-panel').forEach((p,i) => {
+    p.classList.toggle('active', ['prompt','image','both'][i] === t);
+  });
+}
+
+function setExample(txt) {
+  document.getElementById('prompt-text').value = txt;
+  switchTab('prompt');
+}
+
+// ── IMAGE HANDLING ──
+function handleFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const url = e.target.result;
+    const [header, data] = url.split(',');
+    imageData = data;
+    imageType = header.match(/:(.*?);/)[1];
+    const prev = document.getElementById('img-preview');
+    prev.src = url;
+    prev.style.display = 'block';
+    document.querySelector('#drop-zone span.icon').style.display = 'none';
+    document.querySelector('#drop-zone span:not(.icon)').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleFile2(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const url = e.target.result;
+    const [header, data] = url.split(',');
+    imageData2 = data;
+    imageType2 = header.match(/:(.*?);/)[1];
+    const prev = document.getElementById('img-preview-2');
+    prev.src = url;
+    prev.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+// Drag and drop
+['drop-zone', 'drop-zone-2'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
+  el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+  el.addEventListener('drop', e => {
+    e.preventDefault();
+    el.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      if (id === 'drop-zone') handleFile(file);
+      else handleFile2(file);
+    }
+  });
+});
+
+// ── PROGRESS ANIMATION ──
+let progressInterval;
+function startProgress() {
+  let pct = 0;
+  const fill = document.getElementById('progress-fill');
+  const statuses = [
+    'Contacting the PC Box…',
+    'Selecting Pokopia pieces…',
+    'Laying the foundation…',
+    'Building walls and floors…',
+    'Placing roofs and pillars…',
+    'Adding doors and windows…',
+    'Decorating the exterior…',
+    'Lighting the lanterns…',
+    'Compiling the 3D scene…',
+    'Almost ready…'
+  ];
+  let si = 0;
+  progressInterval = setInterval(() => {
+    pct = Math.min(pct + Math.random() * 4, 92);
+    fill.style.width = pct + '%';
+    if (si < statuses.length - 1 && pct > (si + 1) * 9.5) {
+      si++;
+      document.getElementById('load-status').textContent = statuses[si];
+    }
+  }, 600);
+}
+
+function finishProgress() {
+  clearInterval(progressInterval);
+  document.getElementById('progress-fill').style.width = '100%';
+}
+
+// ── SYSTEM PROMPT ──
+const SYSTEM_PROMPT = `You are an expert Pokémon Pokopia builder and 3D web developer. When I describe something to build OR share an image, you will generate a complete, stunning, mobile-friendly 3D interactive viewer using Three.js that renders the build using ONLY authentic Pokémon Pokopia building pieces.
+
+═══════════════════════════════════════
+AUTHENTIC POKOPIA BUILDING PIECES
+═══════════════════════════════════════
+
+STRUCTURAL WALLS: Wooden Wall, Light wooden wall, Painted wall, Plaster wall, Cloth wall, Brick wall, Stone brick wall, Aged-stone wall, Concrete wall, Rough wall, Bronze wall, Iron wall, Gold wall, Crystal wall, Cobblestone wall, Wooden siding (panel), Wooden siding (corner), House partition, Wooden partition, Protruding wall, Curved eave
+
+ROOFS: Sloped tiled roof, Tiled hipped roof, Flat tiled roof, Tiled roof valley, Stone hipped roof, Sloped stone roof, Flat stone roof, Stone roof valley, Pitched brick roof, Dormered brick roof, Brick hipped roof, Flat brick roof, Flat tent roof, Sloped tent roof, Skylight, Corrugated metal, Tiled roof decoration, Stone roof decoration, Brick roof decoration, Magikarp decoration
+
+FLOORS & PATHS: Wooden flooring, Diagonal wooden flooring, Hardwood flooring, Stone flooring, Marble, Brick flooring, Concrete slab, Iron-plate flooring, Asphalt road, Grass flooring, Simple flooring, Mosaic tiling, Stone tiling, Hexagonal flooring, Arched tiling, Neon flooring, Wooden path, Stepping stones, Walkway, Bridge planks, Grate flooring, Iron tiling, Simple square tiling, Stylish tiling, Fish-scale tiling
+
+GROUND & TERRAIN: Field grass, Seashore grass, Alpine grass, Ordinary soil, Ordinary sand, Beach sand, Volcanic ash, Sandstone, Cliff rock, Red cliff rock, Black cliff rock, Skyland cliff rock, White rock, Coarse rock, Gravel, Limestone, Glowing stone, Ice, Lava rock, Cave rock, Ocean rock, Mossy soil, Clay, Muddy sand
+
+PILLARS & SUPPORTS: Stone pillar (upper/middle/lower), Wooden pillar (upper/middle/lower), Round pillar (upper/middle/lower), Extravagant pillar (upper/middle/lower), Simple pillar quarter, Iron column, Iron beam, Iron pillar, Sideways log, Upright log, Roof support, Water pillar quarter
+
+STEPS & LADDERS: Wooden steps, Stylish steps, Stone steps, Concrete steps, Brick steps, Iron steps, Wooden ladder, Iron ladder
+
+DOORS & WINDOWS: Rustic door, Simple door, Modern door, Stylish door, Brainy door, Iron door, Large wooden door, Automatic doors, Shutter, Wooden gate, Swinging doors, Iron gate, Glass window, Window pane, Sash window, Hatch window, Underground hatch, Stained-glass window (upper/middle/lower)
+
+FENCING & BARRIERS: Wooden fencing, Wooden enclosure, Iron enclosure, Metal fencing, Stone fencing, Boat railing, Wooden handrail, Handrail, Harbor pole, Arched barrier, Grate fencing
+
+LIGHTING: Lantern, Mushroom lamp, Plain lamp, Poké Ball lamp, Desk light, Luxury lamp, Garden light, Mirror ball, Fluorescent light, String lights, Spotlight, Antique chandelier, Shell lamp, Wall light, Glowing mushrooms, Glowing stone, Campfire, Torch, Wall torch, Firepit, Bonfire, Slender candle, Eerie candle, Oil lantern, Seedot Lamp
+
+NATURE & PLANTS: Large palm tree, Pointy tree, Leppa tree, Wildflowers, Seashore flowers, Mountain flowers, Skyland flowers, Beautiful flower, Cute flower, Elegant flower, Adorable hedge, Healthy hedge, Damp hedge, Stylish hedge, Tall grass, Duckweed, Dense vines, Moss, Fern, Seaweed, Driftwood, Large boulder, Mossy boulder, Stalagmites, Stalactites, Icicle, Crystal cluster
+
+DECORATIVE OUTDOOR: Sandbox, Slide, Tire toy, Punching bag, Campfire, Vending machine, Bell, Cannon, Gravestone, Mailbox, Weather vane, Garden ornament, Bike, Planter, Wooden birdhouse, Perch, Beach parasol, Horsea fountain, Canoe, Inflatable boat, Hot-spring spout, Small stage, Fishing rod, Arrow sign, Menu board, Sign, Signpost, Barrel, Wooden crate, Worn wooden crate, Garbage bin, Recycling bin, Traffic cone, Fire hydrant, Sandbags, Metal drum, Iron pipes, Utility pole, Sewer-hole cover
+
+SPECIAL STRUCTURES: Windmill kit, Waterwheel kit, Furnace kit, Pikachu fountain kit, Pokémon Center counter, Workbench, Community Box, Smelting furnace, Concrete mixer, Railway track, Handcar, Elevator platform, Hot-spring spout
+
+═══════════════════════════════════════
+COLOR SYSTEM
+═══════════════════════════════════════
+Stone/concrete: #9B9B8E | Wooden wall: #C4A46B | Brick: #A0522D | Iron/metal: #8C8C8C | Gold: #FFD700 | Crystal/glass: #88CCFF (transparent) | Grass/nature: #5A9E3A | Sand: #D4C5A9 | Lava rock: #3D1515 | Glowing stone: #FFFFAA (emissive) | Dark stone: #444444 | Marble: #F0EDE8 | Concrete: #B0ADA8 | Roof tile: #5C3A1E | Plaster wall: #F5F0E8
+
+═══════════════════════════════════════
+TECHNICAL REQUIREMENTS — FOLLOW EXACTLY
+═══════════════════════════════════════
+
+1. OUTPUT: A single self-contained HTML file. No external dependencies except Three.js r128 from cdnjs.
+
+2. RENDERER: Three.js WebGL. Instanced meshes where possible for performance.
+
+3. CAMERA & CONTROLS:
+   - Orbit: left drag | Pan: right drag | Zoom: scroll/pinch
+   - Touch: single finger orbit, two-finger pinch zoom
+   - Start at a dramatic angle showing the build's best face
+   - Camera must NEVER go below Y=-2
+
+4. LIGHTING — always use all three:
+   - Ambient light (soft, 0.8 intensity)
+   - Directional sun light with shadows (position 60,80,40)
+   - Fill light from opposite side (0.4 intensity)
+   - Point lights on any glowing/fire pieces
+
+5. SKY: Gradient shader dome matching the build's mood
+
+6. FOG: Subtle exponential fog matching sky bottom color
+
+7. BLOCK SYSTEM: Use addBlock(x, y, z, 'PIECE_NAME', hexColor)
+   Y=0 is ground level, positive Y goes up. 1 unit = 1 block/meter.
+   NEVER go below Y=-3. Always lay a ground layer first.
+
+8. PIECE MAPPING RULES:
+   - Roof faces MUST slope inward as Y increases
+   - Gabled roof: each layer narrows by 1 on each side per Y level
+   - Pillars use upper/middle/lower variants stacked
+   - Walls run perimeter; floors fill interior
+   - Windows on same XZ as the wall they're in
+   - Doors are 2 blocks tall
+   - Steps decrease in Y as they go outward
+
+9. DETAIL LAYERS — build in order:
+   a) Ground/terrain b) Foundation c) Walls d) Floors e) Pillars/columns
+   f) Windows & doors g) Roof h) Interior furniture i) Exterior landscaping
+   j) Lighting k) Special accent decorations
+
+10. SCALE: Keep builds within 50×50×30. Use 400–1200 pieces.
+
+11. HUD OVERLAY (mobile-friendly, always include):
+    - Top left: Build title + "POKOPIA BUILD" subtitle — dark semi-transparent panel, cyan border
+    - Top right: Scrollable piece palette with color swatches
+    - Bottom left: Controls legend
+    - Bottom right: Floor slice slider (cuts through Y levels)
+    - Center top: View / Place / Erase mode buttons
+    - All text: Courier New monospace, cyan accent #5af
+    - All panels: rgba(8,10,24,0.90) background, 2px solid #5af border, 6px border-radius
+
+12. MOBILE FIRST: Touch events, panels max-width 48vw, scrollable palette, min font 9px
+
+13. INTERACTION: Hover → tooltip with piece name + coords. Place/Erase modes. Palette clickable.
+
+14. ANIMATION: Lanterns/fire pulse gently. Glowing pieces have emissive pulse. Subtle only.
+
+15. PERFORMANCE: Share geometry, cache materials, max 8 point lights.
+
+CRITICAL: Output ONLY the raw HTML. No markdown, no code blocks, no explanation. Start directly with <!DOCTYPE html> and end with </html>.`;
+
+// ── BUILD ──
+async function startBuild() {
+  const errEl = document.getElementById('error-msg');
+  errEl.style.display = 'none';
+
+  // Gather inputs
+  let userText = '';
+  let messages = [];
+
+  if (activeTab === 'prompt') {
+    userText = document.getElementById('prompt-text').value.trim();
+    if (!userText) { showError('Please enter a description!'); return; }
+    messages = [{ role: 'user', content: userText }];
+
+  } else if (activeTab === 'image') {
+    if (!imageData) { showError('Please upload an image!'); return; }
+    messages = [{
+      role: 'user',
+      content: [
+        { type: 'image', source: { type: 'base64', media_type: imageType, data: imageData } },
+        { type: 'text', text: 'Build a Pokopia 3D scene based on this image.' }
+      ]
+    }];
+
+  } else { // both
+    const txt = document.getElementById('both-text').value.trim();
+    if (!imageData2 && !txt) { showError('Please add an image or description!'); return; }
+    const content = [];
+    if (imageData2) content.push({ type: 'image', source: { type: 'base64', media_type: imageType2, data: imageData2 } });
+    content.push({ type: 'text', text: txt || 'Build a Pokopia 3D scene based on this image.' });
+    messages = [{ role: 'user', content }];
+  }
+
+  // Show loading
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('loading').classList.add('active');
+  document.getElementById('build-btn').disabled = true;
+  startProgress();
+
+  const proxyUrl = localStorage.getItem('pokopia_proxy') || '';
+  if (!proxyUrl) {
+    document.getElementById('loading').classList.remove('active');
+    document.getElementById('landing').classList.remove('hidden');
+    document.getElementById('build-btn').disabled = false;
+    clearInterval(progressInterval);
+    showError('⚠️ No proxy URL set. Click "⚙ Setup" in the top-right corner to enter your proxy URL.');
+    return;
+  }
+
+  try {
+    const response = await fetch(proxyUrl.replace(/\/$/, '') + '/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 16000,
+        system: SYSTEM_PROMPT,
+        messages
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error?.message || `API error ${response.status}`);
+    }
+
+    const data = await response.json();
+    const html = data.content.map(b => b.text || '').join('');
+
+    if (!html.includes('<!DOCTYPE') && !html.includes('<html')) {
+      throw new Error('The AI returned unexpected output. Please try again with a different description.');
+    }
+
+    finishProgress();
+    await new Promise(r => setTimeout(r, 400));
+
+    // Render
+    document.getElementById('loading').classList.remove('active');
+    document.getElementById('viewer-wrap').classList.add('active');
+    document.getElementById('back-btn').classList.add('active');
+
+    const frame = document.getElementById('viewer-frame');
+    frame.srcdoc = html;
+
+  } catch (err) {
+    clearInterval(progressInterval);
+    document.getElementById('loading').classList.remove('active');
+    document.getElementById('landing').classList.remove('hidden');
+    document.getElementById('build-btn').disabled = false;
+    showError('Generation failed: ' + err.message);
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function goBack() {
+  document.getElementById('viewer-wrap').classList.remove('active');
+  document.getElementById('back-btn').classList.remove('active');
+  document.getElementById('landing').classList.remove('hidden');
+  document.getElementById('build-btn').disabled = false;
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('viewer-frame').srcdoc = '';
+}
+
+// Enter key submits
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.ctrlKey) startBuild();
+});
+
+// ── PROXY SETUP ──
+function openSetup() {
+  document.getElementById('proxy-input').value = localStorage.getItem('pokopia_proxy') || '';
+  document.getElementById('setup-msg').textContent = '';
+  document.getElementById('setup-modal').style.display = 'flex';
+}
+
+function closeSetup() {
+  document.getElementById('setup-modal').style.display = 'none';
+}
+
+async function saveProxy() {
+  const url = document.getElementById('proxy-input').value.trim().replace(/\/$/, '');
+  if (!url) { document.getElementById('setup-msg').textContent = 'Please enter a URL.'; return; }
+  document.getElementById('setup-msg').textContent = 'Testing connection…';
+  try {
+    const r = await fetch(url + '/health', { signal: AbortSignal.timeout(5000) });
+    if (!r.ok) throw new Error('Bad response');
+    localStorage.setItem('pokopia_proxy', url);
+    document.getElementById('setup-msg').style.color = '#5af';
+    document.getElementById('setup-msg').textContent = '✓ Connected! Proxy saved.';
+    updateProxyStatus();
+    setTimeout(closeSetup, 1200);
+  } catch {
+    document.getElementById('setup-msg').style.color = '#f88';
+    document.getElementById('setup-msg').textContent = '✗ Could not reach that URL. Check the address and try again.';
+  }
+}
+
+function updateProxyStatus() {
+  const url = localStorage.getItem('pokopia_proxy');
+  const el = document.getElementById('proxy-status');
+  if (url) {
+    el.style.color = '#5af';
+    el.textContent = '✓ Proxy configured: ' + url.replace('https://', '');
+  } else {
+    el.style.color = '#f88';
+    el.textContent = '⚠ No proxy set — click ⚙ Setup to configure.';
+  }
+}
+updateProxyStatus();
+</script>
+</body>
+</html>
